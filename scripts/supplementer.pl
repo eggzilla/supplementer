@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #Script supplementer.pl;
-#Last changed Time-stamp: <2014-11-26 13:02:29 fall> by joerg
+#Last changed Time-stamp: <2014-11-26 14:31:12 fall> by joerg
 ###############
 ###Use stuff
 ###############
@@ -22,6 +22,7 @@ use Text::Iconv;
  # This can be any object with the convert method. Or nothing.
 use Spreadsheet::ParseXLSX;
 use DateTime qw();
+use Data::Dumper;
 
 ###############
 ###Variables
@@ -78,61 +79,85 @@ foreach my $file (@csv){
     chdir ($wdir) or die $!;
     my %entries; 
 
-    if ($filetoparse =~ /.csv/){
-	print STDERR "Parsing csv $filetoparse!\n";
-	open (LIST,"<:gzip(autopop)","$file");
+    if ($filetoparse =~ /[.csv|.ssv|.tsv]/ ){
+#hg19.goi.00001;manja;MD2;0;LY96;;;1;00;00;00;0;0-;00;00;00;0;1;11110;0;0;1;0;0;0;0;0;0;#VALUE!;1;1;0;0;1;.;CHECKED
+	print STDERR "Parsing $filetoparse!\n";
+	open (LIST,"<:gzip(autopop)","$filetoparse");
 	while(<LIST>){
 	    next unless ($_ =~ /.goi./ || $_ =~ /.apk./);
 	    chomp(my $line	  = $_);
-	    my @fields		  = split(/\t/,$line);
+	    my @fields		  = split(/\;/,$line);
 	    my $goi		  = $fields[0];
 	    my $hacker		  = $fields[1];
-	    my $gene		  = $fields[3];
-	    my $duplicate	  = $fields[4];   
-	    my @synonyms	  = split(",",$fields[5]);
-	    my @pathways	  = split(",",$fields[6]);
-	    my @literature	  = split(",",$fields[7]);
-	    my $igvs		  = $fields[8];
-	    my $mock		  = $fields[9];
- 	    my $ebola		  = $fields[10];
-	    my $marburg		  = $fields[11];
-	    my $profile		  = $fields[12];
-	    my $homolog		  = $fields[13];
-	    my $raemock		  = $fields[14];
- 	    my $raeebola	  = $fields[15];
-	    my $raemarburg	  = $fields[16];
-	    my $raeprofile	  = $fields[17];
-	    my $ucscs		  = $fields[18];
-	    my $ucsc_conservation = $fields[19];
-	    my $hg_SNPs		  = $fields[20];
-	    my $rae_SNPs	  = $fields[21];
-	    my $sashimi		  = $fields[22];
-	    my $hg_intron	  = $fields[23];
-	    my $rae_intron	  = $fields[24];
-	    my $hg_5utr		  = $fields[25];
-	    my $hg_3utr		  = $fields[26];
-	    my @extra		  = split(",",$fields[27]);
-	    my $notes		  = $fields[28];
+	    my $gene		  = $fields[2];
+	    my $duplicate	  = $fields[3];   
+	    my @synonyms	  = split(",",$fields[4]);
+	    push @synonyms, $gene unless ($synonyms[0]);
+	    my @pathways	  = split(",",$fields[5]);
+	    my @literature	  = split(",",$fields[6]);
+	    my $igvs		  = $fields[7] || '0';
+	    my $mock		  = $fields[8];
+ 	    my $ebola		  = $fields[9];
+	    my $marburg		  = $fields[10];
+	    my $profile		  = $fields[11];
+	    my $homolog		  = $fields[12];
+	    my $raemock		  = $fields[13];
+ 	    my $raeebola	  = $fields[14];
+	    my $raemarburg	  = $fields[15];
+	    my $raeprofile	  = $fields[16];
+	    my $ucscs		  = $fields[17] || '0';
+	    my $ucsc_conservation = $fields[18];
+	    my $hg_SNPs		  = $fields[19];
+	    my $rae_SNPs	  = $fields[20];
+	    my $sashimi		  = $fields[21];
+	    my $hg_intron	  = $fields[22];
+	    my $rae_intron	  = $fields[23];
+	    my $hg_5utr		  = $fields[24];
+	    my $hg_3utr		  = $fields[25];
+	    my $extra		  = $fields[26];
+	    my $notes		  = $fields[27];
+	    
+	    $entries{$gene}{GOI}=$goi;
+	    push @{$entries{$gene}{PATHWAY}}, @pathways;
+	    push @{$entries{$gene}{LITERATURE}}, @literature;   
+	    $entries{$gene}{NAME}=$gene;
+	    $entries{$gene}{TEX}="$goi\/$goi\.tex";
+	    if ($igvs == 1){
+		push @{$entries{$gene}{IGV}},"$goi\/snapshots/$goi\_igv.svg";
+	    }
+	    elsif ($igvs == 0){
+		push @{$entries{$gene}{IGV}},"NONE";
+	    }
+	    else{
+		for (1..$igvs){
+		    push @{$entries{$gene}{IGV}},"$goi\/snapshots/$goi\_igv$_\.svg";
+		}
+	    }
+	    if ($ucscs == 1){
+		push @{$entries{$gene}{UCSC}},"$goi\/snapshots/$goi\_ucsc.svg";
+	    }
+	    elsif ($ucscs == 0){
+		push @{$entries{$gene}{UCSC}},"NONE";
+	    }
+	    else{
+		for (1..$ucscs){
+		    push @{$entries{$gene}{UCSC}},"$goi\/snapshots/$goi\_ucsc$_\.svg";
+		}
+	    }
+	    $entries{$gene}{SASHIMI}="$goi\/snapshots/$goi\_sashimi.svg" if ($sashimi > 0);
+	    $entries{$gene}{NOTES}=$notes;
+	    $entries{$gene}{EXTRA}=$extra;
+	    $entries{$gene}{CUFFLINKS}="Filled by Martin";
+	    $entries{$gene}{READS}="Filled by Markus";
 	    
 	    foreach my $syn (@synonyms){
-		$entries{$syn}{GOI}=$goi;
-		push @{$entries{$syn}{PATHWAY}}, @pathways;
-		push @{$entries{$syn}{LITERATURE}}, @literature;
-	    }
-	    
-	    $entries{$syn}{NAME}=$gene;
-	    $entries{$syn}{TEX}="$goi\/$gio\.tex";
-	    for (1..$igvs){
-		push @{$entries{$syn}{IGV}},"$goi\/snapshots/$goi\_igv$_\.svg";
-	    }
-	    for (1..$extra[0]){
-		push @{$entries{$syn}{UCSC}}"$goi\/snapshots/$goi\_ucsc$_\.eps";
-	    }
-	    $entries{$syn}{SASHIMI}="$goi\/snapshots/$goi\_sashimi.svg" if ($sashimi > 0);
-	    $entries{$syn}{NOTES}=$notes;
-	    $entries{$syn}{EXTRA}=$extra;
-	    $entries{$syn}{CUFFLINKS}="Filled by Martin";
-	    $entries{$syn}{READS}="Filled by Markus";
+		if ($duplicate == 1){
+		    $entries{$gene}=$entries{$syn} if ($entries{$syn});
+		}
+		else{
+		    $entries{$syn}=$entries{$gene};
+		}
+	    }   
 	}
     }
 #    elsif ($filetoparse =~ /.xlsx/){
@@ -179,47 +204,48 @@ foreach my $file (@csv){
 #		    }	    
 #                }		
 #	    }	    
-#	}
-    }
     chdir ($odir) or die $!;
+#    make _supplements(\%entries);
+    print Dumper (\%entries);
 }
 
-sub make_supplements{
-  my ($csv_file_path, $goi_root, $html_destination_path, $base_URL, $log_path) = @_;
-  #check arguments
-  die ("ERROR $fasta_file_path does not exist\n") unless (-e $fasta_file_path);
-  die ("ERROR $html_destination_path does not exist\n") unless (-d $assembly_hub_destination_path);
-  die ("ERROR no URL (network location) provided" unless(defined $base_URL);
-  die ("ERROR $log_path does not exist\n") unless (-e $log_path);
-  #ensure that base_URL ends with slash
-  $base_URL =~ s!/*$!/!;  
-
-  #check program dependencies
-
-
-  #create html directory structure
-
-  #template definition
-  my $template = Template->new({
-                                INCLUDE_PATH => ["$template_path"],
-                                RELATIVE=>1,
-  });
-
-  #construct index.hmtl
-  my $index_path = $html_destination_path. "/index.html";
-  my $index_file = 'index.html';
-  my $index_vars =
-    {
-     foo => "$foo",
-    };
-  $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
-
-  #construct gene of interest goi.html
-  my $goi_path = $assembly_hub_directory . "/goi.html";
-  my $goi_file = 'goi.html';
-  my $goi_vars =
-    {
-     bar => "$bar"
-    };
-  $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";
-}
+#sub make_supplements{
+#    my %gois = %{$_};
+#    
+#    #check arguments
+#    die ("ERROR $html_destination_path does not exist\n") unless (-d $assembly_hub_destination_path);
+#    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
+#    die ("ERROR $log_path does not exist\n") unless (-e $log_path);
+#
+#    #ensure that base_URL ends with slash
+#    $base_URL =~ s!/*$!/!;  
+#	 
+#  #check program dependencies
+#
+#
+#  #create html directory structure
+#
+#  #template definition
+#  my $template = Template->new({
+#                                INCLUDE_PATH => ["$template_path"],
+#                                RELATIVE=>1,
+#  });
+#
+#  #construct index.hmtl
+#  my $index_path = $html_destination_path. "/index.html";
+#  my $index_file = 'index.html';
+#  my $index_vars =
+#    {
+#     foo => "$foo",
+#    };
+#  $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
+#
+#  #construct gene of interest goi.html
+#  my $goi_path = $assembly_hub_directory . "/goi.html";
+#  my $goi_file = 'goi.html';
+#  my $goi_vars =
+#    {
+#     bar => "$bar"
+#    };
+#  $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";
+#}
