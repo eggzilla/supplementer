@@ -5,7 +5,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-26 16:37:01 fall> by joerg
+### Last changed Time-stamp: <2014-11-26 17:21:58 fall> by joerg
 ###############
 ###Use stuff
 ###############
@@ -171,92 +171,48 @@ foreach my $file (@csv){
 	    }
 	}
     }
-#    elsif ($filetoparse =~ /.xlsx/){
-#	print STDERR "Parsing Excel sheet $filetoparse!\n";
-#	my $parser = Spreadsheet::ParseXLSX->new;
-#	my $workbook = $parser->parse("$filetoparse");
-#	print STDERR $workbook->get_filename()."\n";
-#	
-#	if ( !defined $workbook ) {
-#	    die $parser->error(), ".\n";
-#	}
-#	for my $worksheet ( $workbook->worksheets() ) {
-#	    next unless ($worksheet->get_name() eq 'APG' || $worksheet->getname() eq 'GOI');
-#	    my ( $row_min, $row_max ) = $worksheet->row_range();
-#	    my ( $col_min, $col_max ) = $worksheet->col_range();
-#
-#	    for my $row ( $row_min .. $row_max ) {
-#		for my $col ( $col_min .. $col_max ) {
-#
-#		    my $cell = $worksheet->get_cell( $row, $col );
-#		    next unless $cell;
-#		    print "Row, Col    = ($row, $col)\n";
-#		    print "Value       = ", $cell->value(),       "\n";
-#		    print "Unformatted = ", $cell->unformatted(), "\n";
-#		    print "\n";
-#		}
-#	    }
-#	}
-#
-#
-#	my $excel = Spreadsheet::XLSX -> new ($file);
-#	foreach my $sheet (@{$excel -> {Worksheet}}) {	    
-#	    next unless ($sheet->{Name} eq 'APG' || $sheet->{Name} eq 'GOI');
-#	    printf("Sheet: %s\n", $sheet->{Name});    
-#	    $sheet -> {MaxRow} ||= $sheet -> {MinRow};	    
-#	    foreach my $row ( $sheet -> {MinRow} .. $sheet -> {MaxRow}) {
-#		print STDERR "ROW: $row\n";
-#               $sheet -> {MaxCol} ||= $sheet -> {MinCol};                
-#                foreach my $col ($sheet -> {MinCol} ..  $sheet -> {MaxCol}) {		    
-#		    print STDERR "COL: $col\n";
-#		    my $cell = $sheet -> {Cells} [$row] [$col];		    
-#		    if ($cell) {
-#			printf("( %s , %s ) => %s\n", $row, $col, $cell -> {Val});
-#		    }	    
-#                }		
-#	    }	    
+    
     chdir ($odir) or die $!;
-#    make _supplements(\%entries);
-    print Dumper (\%entries);
+    make _supplements(\%entries);
 }
 
-#sub make_supplements{
-#    my %gois = %{$_};
-#    
-#    #check arguments
-#    die ("ERROR $html_destination_path does not exist\n") unless (-d $assembly_hub_destination_path);
-#    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
-#    die ("ERROR $log_path does not exist\n") unless (-e $log_path);
-#
-#    #ensure that base_URL ends with slash
-#    $base_URL =~ s!/*$!/!;  
-#	 
-#  #check program dependencies
-#
-#
-#  #create html directory structure
-#
-#  #template definition
-#  my $template = Template->new({
-#                                INCLUDE_PATH => ["$template_path"],
-#                                RELATIVE=>1,
-#  });
-#
-#  #construct index.hmtl
-#  my $index_path = $html_destination_path. "/index.html";
-#  my $index_file = 'index.html';
-#  my $index_vars =
-#    {
-#     foo => "$foo",
-#    };
-#  $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
-#
-#  #construct gene of interest goi.html
-#  my $goi_path = $assembly_hub_directory . "/goi.html";
-#  my $goi_file = 'goi.html';
-#  my $goi_vars =
-#    {
-#     bar => "$bar"
-#    };
-#  $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";
-#}
+sub make_supplements{
+    my %gois = %{$_};
+    
+    #check arguments
+    die ("ERROR $html_destination_path does not exist\n") unless (-d $assembly_hub_destination_path);
+    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
+    die ("ERROR $log_path does not exist\n") unless (-e $log_path);
+
+    #ensure that base_URL ends with slash
+    $base_URL =~ s!/*$!/!;  
+	 
+  #check program dependencies
+
+
+  #create html directory structure
+
+  #template definition
+  my $template = Template->new({
+                                INCLUDE_PATH => ["$template_path"],
+                                RELATIVE=>1,
+  });
+
+  #construct index.hmtl
+  my $index_path = $html_destination_path. "/index.html";
+  my $index_file = 'index.html';
+  my $index_vars =
+    {
+     foo => "$foo",
+    };
+  $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
+
+  #construct gene of interest goi.html
+  my $goi_path = $assembly_hub_directory . "/goi.html";
+  my $goi_file = 'goi.html';
+  my $goi_vars =
+    {
+     bar => "$bar"
+    };
+  $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";
+}
