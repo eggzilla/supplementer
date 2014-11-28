@@ -1,11 +1,11 @@
 #!/usr/bin/perl
-
 ### To use this Script replace all semicolons in fields with commas,
 ### then all line breaks in fields with nothing,
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-28 18:05:48 fall> by joerg
+### Last changed Time-stamp: <2014-11-28 18:09:27 fall> by joerg
+
 ###############
 ###Use stuff
 ###############
@@ -74,7 +74,6 @@ foreach my $file (@csvs){
     die "File $file could not be openend!\n" unless (-e $file);
 #### Read fields for html from file
     my ($wdir,$filetoparse) = split("\/",$file,2);
-#    print STDERR "$wdir, $filetoparse\n";
     chdir ($wdir) or die $!;
     
     if ($filetoparse =~ /goi|apg/i ){
@@ -135,7 +134,6 @@ sub make_supplements{
 }
 
 sub parse_expression{
-#Gene	Mock basemean 3h	Mock basemean 7h	Mock basemean 23h	EBOV basemean 3h	EBOV basemean 7h	Mock basemean 23h	log2(fc) 3h	log2(fc) 7h	log2(fc) 23h	padj(max(fc)	Mock peak 3h	Mock peak 7h	Mock peak 23h	EBOV peak 3h	EBOV peak 7h	EBOV peak 23h
     my $filetoparse = $_[0];
     my %entries	    = %{$_[1]};
     print STDERR "Expression parsing $filetoparse!\n";
@@ -160,14 +158,10 @@ sub read_tables{
     open (LIST,"<:gzip(autopop)","$filetoparse");
     if ($filetoparse =~ /goi/i){
 	print STDERR "Processing GIO List!\n";
-#$entries{$syn}=$entries{$gene};		    
-#hg19.goi.00001;manja;MD2;0;LY96;;;1;00;00;00;0;0-;00;00;00;0;1;11110;0;0;1;0;0;0;0;0;0;#VALUE!;1;1;0;0;1;.;CHECKED
 	while(<LIST>){
 	    next unless ($_ =~ /.goi./);
-#	    print STDERR $_;
 	    (my $line	  = $_) =~ s/,w+//g;
 	    my @fields		  = split(/\;/,$line);
-#	    print STDERR @fields,"\n";
 	    my $goi		  = $fields[0];
 	    my $hacker		  = $fields[1];
 	    my $gene		  = $fields[2];
@@ -255,10 +249,8 @@ sub read_tables{
 	print STDERR "Processing APG List!\n";
 	while(<LIST>){
 	    next unless ($_ =~ /.apg./);
-#	    print STDERR $_;
 	    (my $line	  = $_) =~ s/,w+//g;
 	    my @fields		  = split(/\;/,$line);
-#	    print STDERR @fields,"\n";
 	    my $apg		  = $fields[0];
 	    my $hacker		  = $fields[1];
 	    my $gene		  = $fields[2];
