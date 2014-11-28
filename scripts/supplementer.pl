@@ -86,51 +86,60 @@ foreach my $file (@csvs){
 }
 
 chdir ($odir) or die $!;
-make_supplements(\%genes);
+make_supplements(\%genes,$html_destination_path,$base_URL,);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-#    foreach my $key( keys %gois ){
-#	print STDERR @{$gois{$key}{PEAKS}} if (defined $gois{$key}{PEAKS});
-#    }
+    #   foreach my $key( keys %gois ){
+    #	print STDERR @{$gois{$key}{PEAKS}} if (defined $gois{$key}{PEAKS});
+    #   }
     print Dumper (\%gois);
     #check arguments
-#    die ("ERROR $html_destination_path does not exist\n") unless (-d $assembly_hub_destination_path);
-#    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
-#    die ("ERROR $log_path does not exist\n") unless (-e $log_path);
+    die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
+    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
 
     #ensure that base_URL ends with slash
-#    $base_URL =~ s!/*$!/!;  
-    
+    $base_URL =~ s!/*$!/!;  
+    my $logPath="$html_destination_path/Log"
     #check program dependencies
 
 
     #create html directory structure
-
+    
     #template definition
-#    my $template = Template->new({
-#	INCLUDE_PATH => ["$template_path"],
-#	RELATIVE=>1,
-#				 });
+    my $template = Template->new({
+	INCLUDE_PATH => ["$template_path"],
+	RELATIVE=>1,
+ 				 });
 
     #construct index.hmtl
-#    my ($foo, $bar)= (0,0);
-#    my $index_path = $html_destination_path. "/index.html";
-#    my $index_file = 'index.html';
-#    my $index_vars =
-#    {
-#	foo => "$foo",
-#    };
-#    $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
-#
-#    #construct gene of interest goi.html
-#    my $goi_path = $assembly_hub_directory . "/goi.html";
-#    my $goi_file = 'goi.html';
-#    my $goi_vars =
-#    {
-#	bar => "$bar"
-#    };
-#    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";
+    my ($foo, $bar)= (0,0);
+    my $index_path = $html_destination_path. "/index.html";
+    my $index_file = 'index.html';
+    my $index_vars =
+    {
+	genesofinterests => "$genesofinterests"
+        
+    };
+    $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
+
+    #construct gene of interest goi.html
+    my $goi_path = $assembly_hub_directory . "/goi.html";
+    my $goi_file = 'goi.html';
+    my $goi_vars =
+    {
+	name => "$name",
+        synonyms => "$synonyms",
+       	goiid => "$goiid",
+       	textxt => "$textxt",
+       	igv => "$igv",
+        sashimi => "$sashimi",
+        ucsc => "$ucsc",
+        additionalplots => "$additionalplots",
+        cufflinks => "$cufflinks",
+        maxy => "$maxy"    
+    };
+    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";
 }
 
 sub parse_expression{
