@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-28 21:47:02 fall> by joerg
+### Last changed Time-stamp: <2014-11-28 22:03:36 fall> by joerg
 
 ###############
 ###Use stuff
@@ -107,32 +107,33 @@ sub make_supplements{
     #create html directory structure
     my @genelist;
     my @parseit = ('GOI', 'APG', 'EXPRESSION');
-    foreach my $from (@parseit){
-	print STDERR "$from\n";
-	foreach my $gene( keys %{$gois{$from}} ){
-	    print STDERR "$from\t$gene\n";
-	    push @genelist, $gene;
+    foreach my $gene( keys %gois ){
+	push @genelist, $gene;
+	foreach my $from (@parseit){
+#	    print STDERR "$from\t$gene\n";
+	    next unless (defined $gois{$gene}{$from}{ID});
 	    my $goi = $gois{$gene}{$from}{ID};	
 	    #construct gene of interest goi.html
 	    my $goi_path = $odir . "/goi.html";
 	    my $goi_file = $goi.".html";
 	    my $name = $gene;
+	    my ($cufflinks, $maxy) = ('NA','NA');
+	    $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}}) if (defined $gois{$gene}{$from}{CUFFLINKS});
+	    $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}}) if (defined $gois{$gene}{$from}{PEAKS});
 	    my $goi_vars =
 	    {   
 		name => $gois{$gene}{$from}{NAME},
-		synonyms => join(",",@{$gois{$gene}{$from}{SYNONYMS}}),
+		synonyms => join(",",$gois{$gene}{$from}{SYNONYMS}),
 		goiid => $gois{$gene}{$from}{ID},
 		textxt => $gois{$gene}{$from}{NOTES},
 		igv => $gois{$gene}{$from}{IGV},
 		sashimi => $gois{$gene}{$from}{SASHIMI},
 		ucsc => $gois{$gene}{$from}{UCSC},
 		additionalplots => $gois{$gene}{$from}{EXTRA},
-		cufflinks => join(",",$gois{$gene}{$from}{CUFFLINKS}),
-		maxy => join(",",$gois{$gene}{$from}{PEAKS})    
+		cufflinks => $cufflinks,
+		maxy => $maxy 
 	    };
-
-	    print Dumper(\$goi_vars); 
-
+#	    print Dumper(\$goi_vars); 
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
 	
@@ -251,8 +252,9 @@ sub read_tables{
 		    }
 		}
 		$entries{$gene}{GOI}{SASHIMI}   = "$goi\/snapshots/$goi\_sashimi.svg" if ($sashimi > 0);
-		$entries{$gene}{GOI}{NOTES}	   = $notes;
-		$entries{$gene}{GOI}{EXTRA}	   = $extra;
+		$entries{$gene}{GOI}{SASHIMI}   = "NONE" unless (defined $entries{$gene}{GOI}{SASHIMI}) ;
+		$entries{$gene}{GOI}{NOTES}	   = $notes || 'NA';
+		$entries{$gene}{GOI}{EXTRA}	   = $extra || 'NA';
 		
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
@@ -342,8 +344,9 @@ sub read_tables{
 		    }
 		}
 		$entries{$gene}{APG}{SASHIMI}   = "$apg\/snapshots/$apg\_sashimi.svg" if ($sashimi > 0);
-		$entries{$gene}{APG}{NOTES}	   = $notes;
-		$entries{$gene}{APG}{EXTRA}	   = $extra;
+		$entries{$gene}{APG}{SASHIMI}   = "NONE" unless (defined $entries{$gene}{APG}{SASHIMI}) ;
+		$entries{$gene}{APG}{NOTES}	   = $notes || 'NA';
+		$entries{$gene}{APG}{EXTRA}	   = $extra || 'NA';
 		
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
