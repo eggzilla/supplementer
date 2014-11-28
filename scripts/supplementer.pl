@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-28 18:38:08 fall> by joerg
+### Last changed Time-stamp: <2014-11-28 20:32:43 fall> by joerg
 
 ###############
 ###Use stuff
@@ -93,7 +93,7 @@ sub make_supplements{
     #   foreach my $key( keys %gois ){
     #	print STDERR @{$gois{$key}{PEAKS}} if (defined $gois{$key}{PEAKS});
     #   }
-    print Dumper (\%gois);
+#    print Dumper (\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
     die ("ERROR no URL (network location) provided") unless(defined $base_URL);
@@ -113,7 +113,6 @@ sub make_supplements{
  				 });
 
     #construct index.hmtl
-    my ($foo, $bar)= (0,0);
     my $index_path = $html_destination_path. "/index.html";
     my $index_file = 'index.html';
     my $index_vars =
