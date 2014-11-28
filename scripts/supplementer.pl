@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-28 20:32:43 fall> by joerg
+### Last changed Time-stamp: <2014-11-28 20:57:42 fall> by joerg
 
 ###############
 ###Use stuff
@@ -90,55 +90,51 @@ make_supplements(\%genes,$html_destination_path,$base_URL,);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-    #   foreach my $key( keys %gois ){
-    #	print STDERR @{$gois{$key}{PEAKS}} if (defined $gois{$key}{PEAKS});
-    #   }
 #    print Dumper (\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
     die ("ERROR no URL (network location) provided") unless(defined $base_URL);
 
-    #ensure that base_URL ends with slash
-    $base_URL =~ s!/*$!/!;  
-    my $logPath="$html_destination_path/Log"
-    #check program dependencies
-
-
-    #create html directory structure
-    
     #template definition
     my $template = Template->new({
 	INCLUDE_PATH => ["$template_path"],
 	RELATIVE=>1,
- 				 });
-
+				 });
+    #ensure that base_URL ends with slash
+    $base_URL =~ s!/*$!/!;  
+    my $logPath="$html_destination_path/Log";
+    
+    #create html directory structure
+	my @genelist;
+    foreach my $key( keys %gois ){
+	push @genelist, $key;
+	my $goi = $entries{$gene}{GOI};	
+	#construct gene of interest goi.html
+	my $goi_path = $assembly_hub_directory . "/goi.html";
+	my $goi_file = 'goi.html';
+	my $goi_vars =
+	{
+	    name => "$name",
+	    synonyms => "$synonyms",
+	    goiid => "$goiid",
+	    textxt => "$textxt",
+	    igv => "$igv",
+	    sashimi => "$sashimi",
+	    ucsc => "$ucsc",
+	    additionalplots => "$additionalplots",
+	    cufflinks => "$cufflinks",
+	    maxy => "$maxy"    
+	};
+	$template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
+    }
+    
     #construct index.hmtl
     my $index_path = $html_destination_path. "/index.html";
     my $index_file = 'index.html';
-    my $index_vars =
-    {
-	genesofinterests => "$genesofinterests"
-        
-    };
-    $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
+    
+    my $index_vars = index_entry();
 
-    #construct gene of interest goi.html
-    my $goi_path = $assembly_hub_directory . "/goi.html";
-    my $goi_file = 'goi.html';
-    my $goi_vars =
-    {
-	name => "$name",
-        synonyms => "$synonyms",
-       	goiid => "$goiid",
-       	textxt => "$textxt",
-       	igv => "$igv",
-        sashimi => "$sashimi",
-        ucsc => "$ucsc",
-        additionalplots => "$additionalplots",
-        cufflinks => "$cufflinks",
-        maxy => "$maxy"    
-    };
-    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";
+    $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
 }
 
 sub parse_expression{
@@ -364,6 +360,6 @@ sub unique_array{
 sub index_entry{
     my $synonym=shift;
     my $goi=shift;
-    my $goilink=$goi.".html"
-    my $index_entry = "<tr><td><a href="$goilink">$synonym</a></td></tr>"
+    my $goilink=$goi.".html";
+    my $index_entry = "<tr><td><a href=\"$goilink\">$synonym</a></td></tr>";
 }
