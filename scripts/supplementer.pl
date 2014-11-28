@@ -381,8 +381,22 @@ sub unique_array{
 }
 
 sub index_entry{
-    my $synonym=shift;
-    my $goi=shift;
-    my $goilink=$goi.".html";
+    my $synonym = shift;
+    my $goi = shift;
+    my $goilink = $goi.".html";
     my $index_entry = "<tr><td><a href=\"$goilink\">$synonym</a></td></tr>";
+    return $index_entry;
+}
+
+sub image_entry{
+    my $dir = shift;
+    my $file = shift;
+    my $odir = shift;
+    my @file = split ("/", $file);
+    my $filename = $file[2];
+    my $imagelink = $dir ."/". $file;
+    my $thumblink = $odir . "/" . "thumbs/" . "$filename"; 
+    `convert $imagelink -resize 150×150! $thumblink`;
+    my $image_entry = "<a href=\"$imagelink\"><img src=\"$thumblink\"></a>";
+    return $image_entry;
 }
