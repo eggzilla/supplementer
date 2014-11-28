@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-28 18:19:20 fall> by joerg
+### Last changed Time-stamp: <2014-11-28 18:38:08 fall> by joerg
 
 ###############
 ###Use stuff
@@ -17,7 +17,7 @@ use Cwd;
 use File::Basename;
 use File::Path qw(make_path remove_tree);
 use IPC::Cmd qw[can_run run run_forked];
-use PerlIO::gzip;
+#use PerlIO::gzip;
 use Getopt::Long qw( :config posix_default bundling no_ignore_case );
 use DateTime qw();
 use Data::Dumper;
