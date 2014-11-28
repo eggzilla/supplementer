@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-28 21:40:11 fall> by joerg
+### Last changed Time-stamp: <2014-11-28 21:47:02 fall> by joerg
 
 ###############
 ###Use stuff
@@ -108,12 +108,14 @@ sub make_supplements{
     my @genelist;
     my @parseit = ('GOI', 'APG', 'EXPRESSION');
     foreach my $from (@parseit){
+	print STDERR "$from\n";
 	foreach my $gene( keys %{$gois{$from}} ){
+	    print STDERR "$from\t$gene\n";
 	    push @genelist, $gene;
 	    my $goi = $gois{$gene}{$from}{ID};	
 	    #construct gene of interest goi.html
 	    my $goi_path = $odir . "/goi.html";
-	    my $goi_file = 'goi.html';
+	    my $goi_file = $goi.".html";
 	    my $name = $gene;
 	    my $goi_vars =
 	    {   
@@ -128,14 +130,17 @@ sub make_supplements{
 		cufflinks => join(",",$gois{$gene}{$from}{CUFFLINKS}),
 		maxy => join(",",$gois{$gene}{$from}{PEAKS})    
 	    };
+
+	    print Dumper(\$goi_vars); 
+
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
 	
 	#construct index.hmtl
-	my $index_path = $html_destination_path. "/index.html";
-	my $index_file = 'index.html';
-	my $index_vars = index_entry(\@genelist);
-	$template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
+#	my $index_path = $html_destination_path. "/index.html";
+#	my $index_file = 'index.html';
+#	my $index_vars = index_entry();
+#	$template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
     }
     chdir($wdir) or die "$!";
 }
