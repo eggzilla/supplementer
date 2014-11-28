@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-28 18:09:27 fall> by joerg
+### Last changed Time-stamp: <2014-11-28 18:19:20 fall> by joerg
 
 ###############
 ###Use stuff
@@ -47,7 +47,7 @@ pod2usage(-verbose => 0)
 
 $dir  =	 cwd() unless ($dir);
 my $today = DateTime->now->strftime('%d%m%Y');
-my @csvs = ($goil,$apgl,$peakl);
+my @csvs = ($peakl,$goil,$apgl);
 $odir =	 "$dir"."\/Supplements_$today/" unless $odir;
 $dir  =~ s/ //g;
 $odir =~ s/ //g;
@@ -165,7 +165,7 @@ sub read_tables{
 	    my $goi		  = $fields[0];
 	    my $hacker		  = $fields[1];
 	    my $gene		  = $fields[2];
-	    next if (defined $entries{$gene});
+	    next if (defined $entries{$gene}{GOI});
 
 	    my $duplicate	  = $fields[3];   
 	    my @synonyms	  = split(",",$fields[4]);
@@ -254,6 +254,8 @@ sub read_tables{
 	    my $apg		  = $fields[0];
 	    my $hacker		  = $fields[1];
 	    my $gene		  = $fields[2];
+	    next if (defined $entries{$gene}{APG});
+
 	    my $duplicate	  = $fields[3];   
 	    my @synonyms	  = split(",",$fields[4]);
 	    push @synonyms, $gene unless ($synonyms[0]);
