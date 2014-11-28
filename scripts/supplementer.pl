@@ -361,3 +361,10 @@ sub unique_array{
 
     return(\@arrayuid);
 }
+
+sub index_entry{
+    my $synonym=shift;
+    my $goi=shift;
+    my $goilink=$goi.".html"
+    my $index_entry = "<tr><td><a href="$goilink">$synonym</a></td></tr>"
+}
