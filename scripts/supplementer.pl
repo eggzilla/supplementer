@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-30 00:19:23 fall> by joerg
+### Last changed Time-stamp: <2014-11-30 00:51:36 fall> by joerg
 
 ###############
 ###Use stuff
@@ -110,10 +110,9 @@ sub make_supplements{
     my $logPath="$html_destination_path/Log";
     
     #create html directory structure
-    my @genelist;
+    my %genelist;
     my @parseit = ('GOI', 'APG', 'EXPRESSION');
     foreach my $gene( sort keys %gois ){
-	push @genelist, $gene;
 	foreach my $from (@parseit){
 	    next unless (defined $gois{$gene}{$from}{ID});
 #	    print STDERR "Making $from for $gene\n";
@@ -122,6 +121,7 @@ sub make_supplements{
 	    my $goi_path = "$goi.html";
 	    my $goi_file = "goi.html";
 	    my $name = $gene;
+	    $genelist{$name}=$goi;
 	    my ($cufflinks, $maxy);
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
 		$cufflinks .= $sample.":";
@@ -149,13 +149,12 @@ sub make_supplements{
 	    };
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
-	
-	#construct index.hmtl
-#	my $index_path = $html_destination_path. "/index.html";
-#	my $index_file = 'index.html';
-#	my $index_vars = index_entry();
-#	$template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
     }
+    #construct index.hmtl
+    my $index_path = $html_destination_path. "/index.html";
+    my $index_file = 'index.html';
+    my $index_vars = index_entry(\%genelist);
+    $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
     chdir($wdir) or die "$!";
 }
 
@@ -423,10 +422,14 @@ sub unique_array{
 }
 
 sub index_entry{
-    my $synonym = shift;
-    my $goi = shift;
-    my $goilink = $goi.".html";
-    my $index_entry = "<tr><td><a href=\"$goilink\">$synonym</a></td></tr>";
+    my $glist = shift;
+    my %genelist = %{$glist};
+    my $index_entry;
+    foreach my $synonym (sort keys %genelist){
+	my $goi = $genelist{$synonym};
+	my $goilink = "$goi\.html";
+	$index_entry .= "<tr><td><a href=\"$goilink\">$synonym</a></td></tr>";
+    }
     return $index_entry;
 }
 
