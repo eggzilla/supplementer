@@ -120,15 +120,18 @@ sub make_supplements{
 	    my ($cufflinks, $maxy) = ('NA','NA');
 	    $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}}) if (defined $gois{$gene}{$from}{CUFFLINKS});
 	    $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}}) if (defined $gois{$gene}{$from}{PEAKS});
-	    my $goi_vars =
+            my $igv = image_entry($gois{$gene}{$from}{IGV},$dir,$odir);
+            my $sashimi = image_entry($gois{$gene}{$from}{SASHIMI},$dir,$odir);
+            my $ucsc = image_entry($gois{$gene}{$from}{UCSC},$dir,$odir);
+	    my $goi_vars = 
 	    {   
 		name => $gois{$gene}{$from}{NAME},
 		synonyms => join(",",$gois{$gene}{$from}{SYNONYMS}),
 		goiid => $gois{$gene}{$from}{ID},
 		textxt => $gois{$gene}{$from}{NOTES},
-		igv => $gois{$gene}{$from}{IGV},
-		sashimi => $gois{$gene}{$from}{SASHIMI},
-		ucsc => $gois{$gene}{$from}{UCSC},
+		igv => $igv,
+		sashimi => $sashimi,
+		ucsc => $ucsc,
 		additionalplots => $gois{$gene}{$from}{EXTRA},
 		cufflinks => $cufflinks,
 		maxy => $maxy 
@@ -389,8 +392,8 @@ sub index_entry{
 }
 
 sub image_entry{
-    my $dir = shift;
     my $file = shift;
+    my $dir = shift;
     my $odir = shift;
     my @file = split ("/", $file);
     my $filename = $file[2];
