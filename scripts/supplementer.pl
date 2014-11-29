@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-29 23:00:58 fall> by joerg
+### Last changed Time-stamp: <2014-11-29 23:19:20 fall> by joerg
 
 ###############
 ###Use stuff
@@ -94,12 +94,12 @@ sub make_supplements{
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
     chdir($odir) or die "$!";
 
-    my $template_path = "./scripts/template";
+    my $template_path = "$wdir/supplementer/scripts/template";
 
     #template definition
     my $template = Template->new({
 	INCLUDE_PATH => ["$template_path"],
-	RELATIVE=>1,
+	RELATIVE=>0
 				 });
     #ensure that base_URL ends with slash
     #$base_URL =~ s!/*$!/!;  
