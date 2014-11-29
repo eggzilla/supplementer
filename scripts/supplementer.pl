@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-29 19:51:15 fall> by joerg
+### Last changed Time-stamp: <2014-11-29 22:55:19 fall> by joerg
 
 ###############
 ###Use stuff
@@ -48,7 +48,8 @@ pod2usage(-verbose => 0)
 $dir  =	 cwd() unless ($dir);
 my $wdir = cwd();
 my $today = DateTime->now->strftime('%d%m%Y');
-my @csvs = ($goil,$apgl,$peakl);
+my @csvs = ($goil,$apgl);
+push @csvs, split(",",$peakl);
 $odir =	 "Supplements_$today/" unless $odir;
 $dir  =~ s/ //g;
 $odir =~ s/ //g;
@@ -69,7 +70,7 @@ if (!-d $odir){
 
 my %genes; 
 foreach my $file (@csvs){
-    print STDERR "Reading input!\n";
+    print STDERR "Reading input from $file!\n";
 #### Read fields for html from file
 #    my ($wdir,$filetoparse) = split("\/",$file,2);
     chdir ($dir) or die $!;
@@ -117,9 +118,14 @@ sub make_supplements{
 	    my $goi_path = $odir . "/goi.html";
 	    my $goi_file = $goi.".html";
 	    my $name = $gene;
-	    my ($cufflinks, $maxy) = ('NA','NA');
-	    $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}}) if (defined $gois{$gene}{$from}{CUFFLINKS});
-	    $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}}) if (defined $gois{$gene}{$from}{PEAKS});
+	    my ($cufflinks, $maxy);
+	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
+		$cufflinks .= $sample.":";
+		$cufflinks .= join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}}) if (defined $gois{$gene}{$from}{CUFFLINKS});
+		$maxy .= $sample.":";
+		$maxy .= join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}}) if (defined $gois{$gene}{$from}{PEAKS});
+	    }
+	    ($cufflinks, $maxy) = ('NA','NA') unless defined ($cufflinks && $maxy);
             my $igv = image_entry(${$gois{$gene}{$from}{IGV}}[0],$dir,$odir);
             my $sashimi = image_entry(${$gois{$gene}{$from}{SASHIMI}}[0],$dir,$odir);
             my $ucsc = image_entry(${$gois{$gene}{$from}{UCSC}}[0],$dir,$odir);
@@ -136,7 +142,7 @@ sub make_supplements{
 		cufflinks => $cufflinks,
 		maxy => $maxy 
 	    };
-#	    print Dumper(\$goi_vars); 
+	    print Dumper(\$goi_vars); 
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
 	
@@ -150,9 +156,18 @@ sub make_supplements{
 }
 
 sub parse_expression{
+#HG19 Mock vs Ebola 
+#HG19 Mock vs MARV
+#HG19 EBOV vs MARV
+#RAE Mock vs EBOV
+#RAE Mock vs MARV
+#RAE EBOV vs MARV
+#HG19 EBOV vs RAE EBOV
+#HG19 MARV vs RAE MARV
     my $filetoparse = $_[0];
+    my $sample = (split(/\./,$filetoparse))[0];
     my %entries	    = %{$_[1]};
-    print STDERR "Expression parsing $filetoparse!\n";
+    print STDERR "Expression parsing $sample!\n";
     open (LIST,"<:gzip(autopop)","$filetoparse");
     while(<LIST>){
 	next if($_ =~ /^#/);
@@ -169,10 +184,10 @@ sub parse_expression{
 	else{
 	    $goto = "EXPRESSION";
 	}
-	push @{$entries{$gene}{$goto}{CUFFLINKS}}, ($mb3, $mb7, $mb23, $eb3, $eb7, $eb23);
-	push @{$entries{$gene}{$goto}{LOGEXPRESSION}}, ($l3, $l7, $l23);
-	push @{$entries{$gene}{$goto}{MAX}}, $max;
-	push @{$entries{$gene}{$goto}{PEAKS}}, ($mp3, $mp7, $mp23, $ep3, $ep7, $ep23);
+	push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}}, ($mb3, $mb7, $mb23, $eb3, $eb7, $eb23);
+	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}}, ($l3, $l7, $l23);
+	push @{$entries{$gene}{$goto}{MAX}{$sample}}, $max;
+	push @{$entries{$gene}{$goto}{PEAKS}{$sample}}, ($mp3, $mp7, $mp23, $ep3, $ep7, $ep23);
     }
     return (\%entries);
 }
@@ -257,8 +272,17 @@ sub read_tables{
 			push @{$entries{$gene}{GOI}{UCSC}},"$goi\/snapshots/$goi\_ucsc$_\.svg";
 		    }
 		}
-		$entries{$gene}{GOI}{SASHIMI}   = "$goi\/snapshots/$goi\_sashimi.svg" if ($sashimi > 0);
-		$entries{$gene}{GOI}{SASHIMI}   = "NONE" unless (defined $entries{$gene}{GOI}{SASHIMI}) ;
+		if ($sashimi == 1){
+		    push @{$entries{$gene}{GOI}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi.svg";
+		}
+		elsif ($sashimi == 0){
+		    push @{$entries{$gene}{GOI}{SASHIMI}},"NONE";
+		}
+		else{
+		    for (1..$sashimi){
+			push @{$entries{$gene}{GOI}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi$_\.svg";
+		    }
+		}
 		$entries{$gene}{GOI}{NOTES}	   = $notes || 'NA';
 		$entries{$gene}{GOI}{EXTRA}	   = $extra || 'NA';
 		
@@ -350,8 +374,17 @@ sub read_tables{
 			push @{$entries{$gene}{APG}{UCSC}},"$apg\/snapshots/$apg\_ucsc$_\.svg";
 		    }
 		}
-		$entries{$gene}{APG}{SASHIMI}   = "$apg\/snapshots/$apg\_sashimi.svg" if ($sashimi > 0);
-		$entries{$gene}{APG}{SASHIMI}   = "NONE" unless (defined $entries{$gene}{APG}{SASHIMI}) ;
+		if ($sashimi == 1){
+		    push @{$entries{$gene}{APG}{SASHIMI}},"$apg\/snapshots/$apg\_sashimi.svg";
+		}
+		elsif ($sashimi == 0){
+		    push @{$entries{$gene}{APG}{SASHIMI}},"NONE";
+		}
+		else{
+		    for (1..$sashimi){
+			push @{$entries{$gene}{APG}{SASHIMI}},"$apg\/snapshots/$apg\_sashimi$_\.svg";
+		    }
+		}
 		$entries{$gene}{APG}{NOTES}	   = $notes || 'NA';
 		$entries{$gene}{APG}{EXTRA}	   = $extra || 'NA';
 		
@@ -403,7 +436,7 @@ sub image_entry{
     my @file = split ("/", $file);
     my $filename = $file[2];
     my $imagelink = $dir ."/". $file;
-    my $thumblink = $odir . "/" . "thumbs/" . "$filename"; 
+    my $thumblink = $odir ."thumbs/" . "$filename"; 
     `convert $imagelink -resize 150×150! $thumblink`;
     my $image_entry = "<a href=\"$imagelink\"><img src=\"$thumblink\"></a>";
     return $image_entry;
