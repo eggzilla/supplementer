@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-29 23:52:38 fall> by joerg
+### Last changed Time-stamp: <2014-11-30 00:05:21 fall> by joerg
 
 ###############
 ###Use stuff
@@ -93,6 +93,7 @@ make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
     my %gois = %{$_[0]};
+#    print Dumper(\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
@@ -115,7 +116,7 @@ sub make_supplements{
 	push @genelist, $gene;
 	foreach my $from (@parseit){
 	    next unless (defined $gois{$gene}{$from}{ID});
-	    print STDERR "Making $from\n";
+#	    print STDERR "Making $from for $gene\n";
 	    my $goi = $gois{$gene}{$from}{ID};	
 	    #construct gene of interest goi.html
 	    my $goi_path = "$goi.html";
@@ -145,7 +146,6 @@ sub make_supplements{
 		cufflinks => $cufflinks,
 		maxy => $maxy 
 	    };
-#	    print Dumper(\$goi_vars); 
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
 	
@@ -247,7 +247,7 @@ sub read_tables{
 		my $notes	      = $fields[27];
 		
 		$entries{$gene}{GOI}{ID}  =	$goi;
-		$entries{$gene}{GOI}{SYNONYMS} = @synonyms;
+		push @{$entries{$gene}{GOI}{SYNONYMS}}, @synonyms;
 		push @{$entries{$gene}{GOI}{PATHWAY}}, @pathways;
 		push @{$entries{$gene}{GOI}{LITERATURE}}, @literature;   
 		$entries{$gene}{GOI}{NAME} =	$gene;
@@ -348,7 +348,7 @@ sub read_tables{
 		my $notes	      = $fields[28];
 		
 		$entries{$gene}{APG}{ID}  = $apg;
-		$entries{$gene}{APG}{SYNONYMS} = @synonyms;
+		push @{$entries{$gene}{APG}{SYNONYMS}} = @synonyms;
 		push @{$entries{$gene}{APG}{PATHWAY}}, @pathways;
 		push @{$entries{$gene}{APG}{LITERATURE}}, @literature;   
 		$entries{$gene}{APG}{NAME} =	$gene;
