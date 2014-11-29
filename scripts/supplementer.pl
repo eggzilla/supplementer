@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-30 00:04:30 fall> by joerg
+### Last changed Time-stamp: <2014-11-30 00:05:21 fall> by joerg
 
 ###############
 ###Use stuff
@@ -93,7 +93,7 @@ make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-    print Dumper(\%gois);
+#    print Dumper(\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
