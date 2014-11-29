@@ -94,7 +94,7 @@ sub make_supplements{
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
     chdir($odir) or die "$!";
 
-    my $template_path = "supplementer/scripts/template";
+    my $template_path = "./scripts/template";
 
     #template definition
     my $template = Template->new({
