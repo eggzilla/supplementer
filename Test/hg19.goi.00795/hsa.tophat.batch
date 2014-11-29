@@ -1,0 +1,8 @@
+#IGV batch execution
+#java -Xmx1000m -jar /home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//software/IGV_2.3.39/igv.jar --batch=/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/hsa.tophat.batch
+new
+#maxPanelHeight 2000
+genome /home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_hsa/hsa.hg19.goi.00795.fna
+load /home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/gff/hsa.blast.hg19.goi.00795.gff
+sort position
+collapse hsa.blast.hg19.goi.00795.gff

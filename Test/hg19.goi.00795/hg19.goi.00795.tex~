@@ -1,0 +1,39 @@
+\genetoclevel{MAP3K7} % <- put the name of your gene here
+
+%%%%%%%%%%%%%%%%%%%%% put your text for gene MAP3K7 here: %%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\igvfigure{
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\genefolder/goi/hg19.goi.00795_igv} %
+\caption{\igv of gene MAP3K7.} % <- say something about the figure here
+\end{figure}
+}
+
+\sashimifigure{
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\genefolder/goi/hg19.goi.00795_sashimi} %
+\caption{\sashimi of gene MAP3K7.} % <- say something about the figure here
+\end{figure}
+}
+
+\ucscfigure{
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{\genefolder/goi/hg19.goi.00795_ucsc} %
+\caption{\ucsc of gene MAP3K7.} % <- say something about the figure here
+\end{figure}
+}
+
+% put special figures here:
+%% \begin{figure}[H]
+%% \centering
+%% \includegraphics[width=\textwidth]{\genefolder/goi/} %
+%% \caption{} % <- say something about the figure here
+%% \end{figure}
+
+
+\setcounter{figure}{0}

@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-29 23:29:59 fall> by joerg
+### Last changed Time-stamp: <2014-11-29 23:52:38 fall> by joerg
 
 ###############
 ###Use stuff
@@ -68,6 +68,11 @@ if (!-d $odir){
     make_path ($odir) or die "Error creating directory: $odir";
 }
 
+if (!-d "$odir/thumbs"){
+    print STDERR "Creating output directory $odir/thumbs!\n";
+    make_path ("$odir/thumbs") or die "Error creating directory: $odir/thumbs $!";
+}
+
 my %genes; 
 foreach my $file (@csvs){
     print STDERR "Reading input from $file!\n";
@@ -106,10 +111,11 @@ sub make_supplements{
     #create html directory structure
     my @genelist;
     my @parseit = ('GOI', 'APG', 'EXPRESSION');
-    foreach my $gene( keys %gois ){
+    foreach my $gene( sort keys %gois ){
 	push @genelist, $gene;
 	foreach my $from (@parseit){
 	    next unless (defined $gois{$gene}{$from}{ID});
+	    print STDERR "Making $from\n";
 	    my $goi = $gois{$gene}{$from}{ID};	
 	    #construct gene of interest goi.html
 	    my $goi_path = "$goi.html";
@@ -139,7 +145,7 @@ sub make_supplements{
 		cufflinks => $cufflinks,
 		maxy => $maxy 
 	    };
-	    print Dumper(\$goi_vars); 
+#	    print Dumper(\$goi_vars); 
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
 	
@@ -258,14 +264,14 @@ sub read_tables{
 		    }
 		}
 		if ($ucscs == 1){
-		    push @{$entries{$gene}{GOI}{UCSC}},"$goi\/snapshots/$goi\_ucsc.svg";
+		    push @{$entries{$gene}{GOI}{UCSC}},"$goi\/snapshots/$goi\_ucsc.eps";
 		}
 		elsif ($ucscs == 0){
 		    push @{$entries{$gene}{GOI}{UCSC}},"NONE";
 		}
 		else{
 		    for (1..$ucscs){
-			push @{$entries{$gene}{GOI}{UCSC}},"$goi\/snapshots/$goi\_ucsc$_\.svg";
+			push @{$entries{$gene}{GOI}{UCSC}},"$goi\/snapshots/$goi\_ucsc$_\.eps";
 		    }
 		}
 		if ($sashimi == 1){
@@ -290,7 +296,7 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    push @process, $line unless ($entries{$syn});
+		    push @process, $line unless ($entries{$syn}{GOI});
 		    $entries{$gene}{GOI} = $entries{$syn}{GOI} if ($entries{$syn}{GOI});
 		}
 	    }
@@ -359,14 +365,14 @@ sub read_tables{
 		    }
 		}
 		if ($ucscs == 1){
-		    push @{$entries{$gene}{APG}{UCSC}},"$apg\/snapshots/$apg\_ucsc.svg";
+		    push @{$entries{$gene}{APG}{UCSC}},"$apg\/snapshots/$apg\_ucsc.eps";
 		}
 		elsif ($ucscs == 0){
 		    push @{$entries{$gene}{APG}{UCSC}},"NONE";
 		}
 		else{
 		    for (1..$ucscs){
-			push @{$entries{$gene}{APG}{UCSC}},"$apg\/snapshots/$apg\_ucsc$_\.svg";
+			push @{$entries{$gene}{APG}{UCSC}},"$apg\/snapshots/$apg\_ucsc$_\.eps";
 		    }
 		}
 		if ($sashimi == 1){
@@ -391,7 +397,7 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    push @process, $line unless ($entries{$syn});
+		    push @process, $line unless ($entries{$syn}{APG});
 		    $entries{$gene}{APG}=$entries{$syn}{APG} if ($entries{$syn}{APG});
 		}
 	    }
@@ -434,10 +440,10 @@ sub image_entry{
     }else{
         my @file = split ("/", $file);
         my $filename = $file[2];
-        my $snapshotdir = $file[0] . $file[1];
-        my $imagelink = $dir ."/". $file;
-        my $thumblink = $odir ."thumbs/" . "$filename"; 
-        `convert $imagelink -resize 150×150! $thumblink`;
+        my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
+        my $imagelink = $wdir . "/" . $dir ."/". $file;
+        my $thumblink = $wdir . "/" . $odir ."thumbs/" . "$filename"; 
+        `convert $imagelink -resize 150x150! $thumblink`;
         $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
     }
     return $image_entry;

@@ -1,0 +1,8 @@
+#IGV batch execution
+#java -Xmx1000m -jar /home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//software/IGV_2.3.39/igv.jar --batch=/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/rae.tophat.batch
+new
+#maxPanelHeight 2000
+genome /home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/rae.hg19.goi.00795.fna
+load /home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/gff/rae.blast.hg19.goi.00795.gff,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_w_3h.tophat.sorted.bam,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_w_7h.tophat.sorted.bam,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_w_23h.tophat.sorted.bam,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_e_3h.tophat.sorted.bam,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_e_7h.tophat.sorted.bam,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_e_23h.tophat.sorted.bam,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_m_3h.tophat.sorted.bam,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_m_7h.tophat.sorted.bam,/home/fall/Offlinework/Ebola_Jena/00FIGHT_AGAINST_EBOLA//holy_folder/goi/hg19.goi.00795/igv_rae/tophat/rae_m_23h.tophat.sorted.bam
+sort position
+collapse rae.blast.hg19.goi.00795.gff
