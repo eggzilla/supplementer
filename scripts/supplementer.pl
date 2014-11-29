@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-30 00:15:42 fall> by joerg
+### Last changed Time-stamp: <2014-11-30 00:19:23 fall> by joerg
 
 ###############
 ###Use stuff
@@ -138,7 +138,7 @@ sub make_supplements{
 		name => $gois{$gene}{$from}{NAME},
 		synonyms => join(",",@{$gois{$gene}{$from}{SYNONYMS}}),
 		goiid => $gois{$gene}{$from}{ID},
-		textxt => $gois{$gene}{$from}{NOTES},
+		textxt => $gois{$gene}{$from}{TEX},
 		igv => $igv,
 		sashimi => $sashimi,
 		ucsc => $ucsc,
