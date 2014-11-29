@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-29 22:55:19 fall> by joerg
+### Last changed Time-stamp: <2014-11-29 23:00:58 fall> by joerg
 
 ###############
 ###Use stuff
@@ -429,15 +429,22 @@ sub index_entry{
     return $index_entry;
 }
 
+
 sub image_entry{
     my $file = shift;
     my $dir = shift;
     my $odir = shift;
-    my @file = split ("/", $file);
-    my $filename = $file[2];
-    my $imagelink = $dir ."/". $file;
-    my $thumblink = $odir ."thumbs/" . "$filename"; 
-    `convert $imagelink -resize 150×150! $thumblink`;
-    my $image_entry = "<a href=\"$imagelink\"><img src=\"$thumblink\"></a>";
+    my $image_entry;
+    if($file eq "none"){
+        $image_entry = "none";
+    }else{
+        my @file = split ("/", $file);
+        my $filename = $file[2];
+        my $snapshotdir = $file[0] . $file[1];
+        my $imagelink = $dir ."/". $file;
+        my $thumblink = $odir ."thumbs/" . "$filename"; 
+        `convert $imagelink -resize 150×150! $thumblink`;
+        $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
+    }
     return $image_entry;
 }
