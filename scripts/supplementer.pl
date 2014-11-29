@@ -133,12 +133,13 @@ sub make_supplements{
             my $igv = image_entry(${$gois{$gene}{$from}{IGV}}[0],$dir,$odir);
             my $sashimi = image_entry(${$gois{$gene}{$from}{SASHIMI}}[0],$dir,$odir);
             my $ucsc = image_entry(${$gois{$gene}{$from}{UCSC}}[0],$dir,$odir);
+            my $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir);
 	    my $goi_vars = 
 	    {   
 		name => $gois{$gene}{$from}{NAME},
 		synonyms => join(",",@{$gois{$gene}{$from}{SYNONYMS}}),
 		goiid => $gois{$gene}{$from}{ID},
-		textxt => $gois{$gene}{$from}{TEX},
+		textxt => $tex_link,
 		igv => $igv,
 		sashimi => $sashimi,
 		ucsc => $ucsc,
@@ -429,7 +430,6 @@ sub index_entry{
     return $index_entry;
 }
 
-
 sub image_entry{
     my $file = shift;
     my $dir = shift;
@@ -447,4 +447,20 @@ sub image_entry{
         $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
     }
     return $image_entry;
+}
+
+sub link_entry{
+    my $file = shift;
+    my $dir = shift;
+    my $link_entry;
+    if($file eq 'NONE'){
+        $link_entry = "none";
+    }else{
+        my @file = split ("/", $file);
+        my $filename = $file[2];
+        my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
+        my $filelink = $wdir . "/" . $dir ."/". $file;
+        $link_entry = "<a href=\"$filelink\">texfile</a>";
+    }
+    return $link_entry;
 }
