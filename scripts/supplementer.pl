@@ -396,15 +396,22 @@ sub index_entry{
     return $index_entry;
 }
 
+
 sub image_entry{
     my $file = shift;
     my $dir = shift;
     my $odir = shift;
-    my @file = split ("/", $file);
-    my $filename = $file[2];
-    my $imagelink = $dir ."/". $file;
-    my $thumblink = $odir . "/" . "thumbs/" . "$filename"; 
-    `convert $imagelink -resize 150×150! $thumblink`;
-    my $image_entry = "<a href=\"$imagelink\"><img src=\"$thumblink\"></a>";
+    my $image_entry;
+    unless($file == "none"){
+        $image_entry = "none";
+    }else{
+        my @file = split ("/", $file);
+        my $filename = $file[2];
+        my $snapshotdir = $file2[0] . $file2[1];
+        my $imagelink = $dir ."/". $file;
+        my $thumblink = $odir . "/" . "thumbs/" . "$filename"; 
+        `convert $imagelink -resize 150×150! $thumblink`;
+        $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
+    }
     return $image_entry;
 }
