@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-30 00:05:21 fall> by joerg
+### Last changed Time-stamp: <2014-11-30 00:15:42 fall> by joerg
 
 ###############
 ###Use stuff
@@ -88,7 +88,7 @@ foreach my $file (@csvs){
     chdir ($wdir);
 }
 
-my $html_destination_path = $odir;
+my $html_destination_path = join("/",$wdir,$odir);
 make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
@@ -136,7 +136,7 @@ sub make_supplements{
 	    my $goi_vars = 
 	    {   
 		name => $gois{$gene}{$from}{NAME},
-		synonyms => join(",",$gois{$gene}{$from}{SYNONYMS}),
+		synonyms => join(",",@{$gois{$gene}{$from}{SYNONYMS}}),
 		goiid => $gois{$gene}{$from}{ID},
 		textxt => $gois{$gene}{$from}{NOTES},
 		igv => $igv,
@@ -171,7 +171,7 @@ sub parse_expression{
     my $sample = (split(/\./,$filetoparse))[0];
     my %entries	    = %{$_[1]};
     print STDERR "Expression parsing $sample!\n";
-    open (LIST,"<:gzip(autopop)","$filetoparse");
+    open (LIST,"<","$filetoparse");
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
@@ -199,7 +199,7 @@ sub read_tables{
     my %entries	    = %{$_[1]};
     my @again;
     print STDERR "Parsing $filetoparse!\n";
-    open (my $list,"<:gzip(autopop)","$filetoparse");
+    open (my $list,"<","$filetoparse");
     my @process = <$list>;
 
     if ($filetoparse =~ /goi/i){
