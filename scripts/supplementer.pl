@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-29 23:22:39 fall> by joerg
+### Last changed Time-stamp: <2014-11-29 23:29:59 fall> by joerg
 
 ###############
 ###Use stuff
@@ -83,17 +83,15 @@ foreach my $file (@csvs){
     chdir ($wdir);
 }
 
-my ($html_destination_path) = ($odir);
+my $html_destination_path = $odir;
 make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-#    print Dumper (\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
     chdir($odir) or die "$!";
-
     my $template_path = "$wdir/supplementer/scripts/template";
 
     #template definition
@@ -111,12 +109,11 @@ sub make_supplements{
     foreach my $gene( keys %gois ){
 	push @genelist, $gene;
 	foreach my $from (@parseit){
-#	    print STDERR "$from\t$gene\n";
 	    next unless (defined $gois{$gene}{$from}{ID});
 	    my $goi = $gois{$gene}{$from}{ID};	
 	    #construct gene of interest goi.html
-	    my $goi_path = $odir . "/goi.html";
-	    my $goi_file = $goi.".html";
+	    my $goi_path = "$goi.html";
+	    my $goi_file = "goi.html";
 	    my $name = $gene;
 	    my ($cufflinks, $maxy);
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
@@ -173,7 +170,6 @@ sub parse_expression{
 	next if($_ =~ /^#/);
 	my $line  = $_;
 	my ($gene, $mb3, $mb7, $mb23, $eb3, $eb7, $eb23, $l3, $l7, $l23, $max, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23) = split(/\t/,$line);
-#	print STDERR $gene,"\n";
 	my $goto;
 	if (defined $entries{$gene}{GOI}){
 	    $goto = "GOI";
@@ -294,7 +290,6 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-#		    print STDERR "GOI: $gene is a Duplicate of $syn but this has no been processed yet\n" unless ($entries{$syn});
 		    push @process, $line unless ($entries{$syn});
 		    $entries{$gene}{GOI} = $entries{$syn}{GOI} if ($entries{$syn}{GOI});
 		}
@@ -396,7 +391,6 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-#		    print STDERR "APG: $gene is a Duplicate of $syn but this has no been processed yet\n" unless ($entries{$syn});
 		    push @process, $line unless ($entries{$syn});
 		    $entries{$gene}{APG}=$entries{$syn}{APG} if ($entries{$syn}{APG});
 		}
@@ -443,7 +437,7 @@ sub image_entry{
         my $snapshotdir = $file[0] . $file[1];
         my $imagelink = $dir ."/". $file;
         my $thumblink = $odir ."thumbs/" . "$filename"; 
-#        `convert $imagelink -resize 150×150! $thumblink`;
+        `convert $imagelink -resize 150×150! $thumblink`;
         $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
     }
     return $image_entry;
