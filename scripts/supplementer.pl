@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-28 22:03:36 fall> by joerg
+### Last changed Time-stamp: <2014-11-29 19:38:17 fall> by joerg
 
 ###############
 ###Use stuff
@@ -73,7 +73,7 @@ foreach my $file (@csvs){
 #### Read fields for html from file
 #    my ($wdir,$filetoparse) = split("\/",$file,2);
     chdir ($dir) or die $!;
-    if ($file =~ /goi|apg/i ){
+    if ($file =~ /goi|apg/i){
 	%genes = %{read_tables($file,\%genes)};
     }
     else{
@@ -177,11 +177,14 @@ sub parse_expression{
 sub read_tables{
     my $filetoparse = $_[0];
     my %entries	    = %{$_[1]};
+    my @again;
     print STDERR "Parsing $filetoparse!\n";
-    open (LIST,"<:gzip(autopop)","$filetoparse");
+    open (my $list,"<:gzip(autopop)","$filetoparse");
+    my @process = <$list>;
+
     if ($filetoparse =~ /goi/i){
 	print STDERR "Processing GIO List!\n";
-	while(<LIST>){
+	foreach(@process){
 	    next unless ($_ =~ /.goi./);
 	    (my $line	  = $_) =~ s/,w+//g;
 	    my @fields		  = split(/\;/,$line);
@@ -191,7 +194,7 @@ sub read_tables{
 	    next if (defined $entries{$gene}{GOI}{ID});
 
 	    my $duplicate	  = $fields[3];   
-	    my @synonyms	  = split(",",$fields[4]);
+	    my @synonyms	  = split(/[,\s]+/,$fields[4]);
 	    push @synonyms, $gene unless ($synonyms[0]);
 	    if ($duplicate eq '' || $duplicate == 0 || ($duplicate && $fields[8] ne '')){
 		my @pathways	      = split(",",$fields[5]) if ($fields[5] ne '');
@@ -264,7 +267,8 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    print STDERR "GOI: $gene is a Duplicate of $syn but this has no been processed yet\n" unless ($entries{$syn});
+#		    print STDERR "GOI: $gene is a Duplicate of $syn but this has no been processed yet\n" unless ($entries{$syn});
+		    push @process, $line unless ($entries{$syn});
 		    $entries{$gene}{GOI} = $entries{$syn}{GOI} if ($entries{$syn}{GOI});
 		}
 	    }
@@ -272,7 +276,7 @@ sub read_tables{
     }
     elsif ($filetoparse =~ /apg/){
 	print STDERR "Processing APG List!\n";
-	while(<LIST>){
+	foreach(@process){
 	    next unless ($_ =~ /.apg./);
 	    (my $line	  = $_) =~ s/,w+//g;
 	    my @fields		  = split(/\;/,$line);
@@ -282,7 +286,7 @@ sub read_tables{
 	    next if (defined $entries{$gene}{APG}{ID});
 
 	    my $duplicate	  = $fields[3];   
-	    my @synonyms	  = split(",",$fields[4]);
+	    my @synonyms	  = split(/[,\s]+/,$fields[4]);
 	    push @synonyms, $gene unless ($synonyms[0]);
 	    if ($duplicate eq '' || $duplicate == 0){
 		my @pathways	      = split(/[:,]+/,$fields[5]) if ($fields[5] ne '');
@@ -356,7 +360,8 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    print STDERR "APG: $gene is a Duplicate of $syn but this has no been processed yet\n" unless ($entries{$syn});
+#		    print STDERR "APG: $gene is a Duplicate of $syn but this has no been processed yet\n" unless ($entries{$syn});
+		    push @process, $line unless ($entries{$syn});
 		    $entries{$gene}{APG}=$entries{$syn}{APG} if ($entries{$syn}{APG});
 		}
 	    }
