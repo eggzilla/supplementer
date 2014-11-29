@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-29 19:38:17 fall> by joerg
+### Last changed Time-stamp: <2014-11-29 19:51:15 fall> by joerg
 
 ###############
 ###Use stuff
@@ -120,9 +120,9 @@ sub make_supplements{
 	    my ($cufflinks, $maxy) = ('NA','NA');
 	    $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}}) if (defined $gois{$gene}{$from}{CUFFLINKS});
 	    $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}}) if (defined $gois{$gene}{$from}{PEAKS});
-            my $igv = image_entry($gois{$gene}{$from}{IGV},$dir,$odir);
-            my $sashimi = image_entry($gois{$gene}{$from}{SASHIMI},$dir,$odir);
-            my $ucsc = image_entry($gois{$gene}{$from}{UCSC},$dir,$odir);
+            my $igv = image_entry(${$gois{$gene}{$from}{IGV}}[0],$dir,$odir);
+            my $sashimi = image_entry(${$gois{$gene}{$from}{SASHIMI}}[0],$dir,$odir);
+            my $ucsc = image_entry(${$gois{$gene}{$from}{UCSC}}[0],$dir,$odir);
 	    my $goi_vars = 
 	    {   
 		name => $gois{$gene}{$from}{NAME},
