@@ -440,9 +440,11 @@ sub image_entry{
     }else{
         my @file = split ("/", $file);
         my $filename = $file[2];
+        $filename =~ s/.svg/.png/;
+        $filename =~ s/.eps/.png/;
         my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
         my $imagelink = $wdir . "/" . $dir ."/". $file;
-        my $thumblink = $wdir . "/" . $odir ."thumbs/" . "$filename"; 
+        my $thumblink = "./" ."thumbs/" . "$filename";
         `convert $imagelink -resize 150x150! $thumblink`;
         $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
     }
