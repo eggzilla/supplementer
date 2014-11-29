@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-29 23:19:20 fall> by joerg
+### Last changed Time-stamp: <2014-11-29 23:22:39 fall> by joerg
 
 ###############
 ###Use stuff
@@ -435,7 +435,7 @@ sub image_entry{
     my $dir = shift;
     my $odir = shift;
     my $image_entry;
-    if($file eq "none"){
+    if($file eq 'NONE'){
         $image_entry = "none";
     }else{
         my @file = split ("/", $file);
@@ -443,7 +443,7 @@ sub image_entry{
         my $snapshotdir = $file[0] . $file[1];
         my $imagelink = $dir ."/". $file;
         my $thumblink = $odir ."thumbs/" . "$filename"; 
-        `convert $imagelink -resize 150×150! $thumblink`;
+#        `convert $imagelink -resize 150×150! $thumblink`;
         $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
     }
     return $image_entry;
