@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-30 00:51:36 fall> by joerg
+### Last changed Time-stamp: <2014-11-30 01:08:34 fall> by joerg
 
 ###############
 ###Use stuff
@@ -153,7 +153,11 @@ sub make_supplements{
     #construct index.hmtl
     my $index_path = $html_destination_path. "/index.html";
     my $index_file = 'index.html';
-    my $index_vars = index_entry(\%genelist);
+    my $index_entries = index_entry(\%genelist);
+    my $index_vars = 
+	{
+	    genesofinterests => $index_entries
+	};
     $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
     chdir($wdir) or die "$!";
 }
