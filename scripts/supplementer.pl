@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 21:33:23 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 21:47:23 fall> by joerg
 
 ###############
 ###Use stuff
@@ -134,10 +134,11 @@ sub make_supplements{
             my $sashimi = image_entry(${$gois{$gene}{$from}{SASHIMI}}[0],$dir,$odir);
             my $ucsc = image_entry(${$gois{$gene}{$from}{UCSC}}[0],$dir,$odir);
             my $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir);
+	    (my $syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g;
 	    my $goi_vars = 
 	    {   
 		name => $gois{$gene}{$from}{NAME},
-		synonyms => join(",",@{$gois{$gene}{$from}{SYNONYMS}}),
+		synonyms => $syn,
 		goiid => $gois{$gene}{$from}{ID},
 		textxt => $tex_link,
 		igv => $igv,
