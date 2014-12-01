@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 22:14:23 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 22:34:49 fall> by joerg
 
 ###############
 ###Use stuff
@@ -93,7 +93,7 @@ make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-#print Dumper(\%gois);
+#    print Dumper(\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
@@ -126,6 +126,7 @@ sub make_supplements{
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
 		$cufflinks .= $sample.":";
 		$cufflinks .= join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample});
+#print STDERR "SAMPLE:$gene\t$from\t$sample\n";
 		$maxy .= $sample.":";
 		$maxy .= join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample});
 	    }
@@ -223,12 +224,33 @@ sub read_tables{
 
 	    my $duplicate	  = $fields[3];   
 #	    my @synonyms	  = split(/[,\s]+/,$fields[4]);
-	    (my @synonyms	  = split(/[,]+|[\s]{2,}|\t/,$fields[4])) =~ s/, /,/g;
+	    my @synonyms	  = (
+		map {   
+		    s/^\s+//;  # strip leading spaces
+#                s/\s+$//;  # strip trailing spaces
+		    $_         # return the modified string
+		}
+		split(/[,]+|[\s]{2,}|\t/,$fields[4])
+		) if ($fields[4] ne '');
 	    push @synonyms, $gene unless ($synonyms[0]);
 	    if ($duplicate eq '' || $duplicate == 0 || ($duplicate && $fields[8] ne '')){
-		(my @pathways = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[5])) =~ s/, /,/g if ($fields[5] ne '');
+		my @pathways =	(
+		    map {   
+			s/^\s+//;  # strip leading spaces
+#                s/\s+$//;  # strip trailing spaces
+			$_         # return the modified string
+		    }
+		    split(/[,]+|[\s]{2,}|\t/,$fields[5])
+		    ) if ($fields[5] ne '');
 		push @pathways, 'Unknown' unless ($pathways[0]);
-		(my @literature	      = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[6])) =~ s/, /,/g  if ($fields[6] ne '');
+		my @literature =	(
+		    map {   
+			s/^\s+//;  # strip leading spaces
+#                s/\s+$//;  # strip trailing spaces
+			$_         # return the modified string
+		    }
+		    split(/[,]+|[\s]{2,}|\t/,$fields[6])
+		    ) if ($fields[6] ne '');
 		push @literature, 'Unknown' unless ($literature[0]);
 		my $igvs	      = (split(/[:,\s\/]+/,$fields[7],2))[0] || '0';
 		$igvs = 0 if ($igvs =~ /todo|NA/i);
@@ -323,16 +345,37 @@ sub read_tables{
 	    my $apg		  = $fields[0];
 	    my $hacker		  = $fields[1];
 	    next if ($hacker eq 'OPTIONAL');
-	    my $gene		  = $fields[2];
+	    my $gene		  = $fields[2] =~ s/^\s+//g;;
 	    next if (defined $entries{$gene}{APG}{ID});
 
 	    my $duplicate	  = $fields[3];   
-	    (my @synonyms	  = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[4])) =~ s/, /,/g;
+	    my @synonyms	  = (
+		map {   
+		    s/^\s+//;  # strip leading spaces
+#                s/\s+$//;  # strip trailing spaces
+		    $_         # return the modified string
+		}
+		split(/[,]+|[\s]{2,}|\t/,$fields[4])
+		) if ($fields[4] ne '');
 	    push @synonyms, $gene unless ($synonyms[0]);
 	    if ($duplicate eq '' || $duplicate == 0){
-		(my @pathways	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[5])) =~ s/, /,/g  if ($fields[5] ne '');
+		my @pathways =	(
+		    map {   
+			s/^\s+//;  # strip leading spaces
+#                s/\s+$//;  # strip trailing spaces
+			$_         # return the modified string
+		    }
+		    split(/[,]+|[\s]{2,}|\t/,$fields[5])
+		    ) if ($fields[5] ne '');
 		push @pathways, 'Unknown' unless ($pathways[0]);
-		(my @literature	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[6])) =~ s/, /,/g  if ($fields[6] ne '');
+		my @literature =	(
+		    map {   
+			s/^\s+//;  # strip leading spaces
+#                s/\s+$//;  # strip trailing spaces
+			$_         # return the modified string
+		    }
+		    split(/[,]+|[\s]{2,}|\t/,$fields[6])
+		    ) if ($fields[6] ne '');
 		push @literature, 'Unknown' unless ($literature[0]);
 		my $igvs	      = (split(/[:,\s\/]+/,$fields[7],2))[0] || '0';
 		$igvs = 0 if ($igvs =~ /todo|NA/i);
