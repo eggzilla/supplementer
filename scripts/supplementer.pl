@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 20:26:42 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 20:43:51 fall> by joerg
 
 ###############
 ###Use stuff
@@ -208,9 +208,11 @@ sub read_tables{
 
     if ($filetoparse =~ /goi/i){
 	print STDERR "Processing GIO List!\n";
-	foreach(@process){
-	    next unless ($_ =~ /.goi./);
-	    (my $line	  = $_) =~ s/,w+//g;
+	while (@process) {
+	    my $item = shift(@process);
+#print STDERR $#process,"\n";
+	    next unless ($item =~ /.goi./);
+	    (my $line	  = $item) =~ s/,w+//g;
 	    my @fields		  = split(/\;/,$line);
 	    my $goi		  = $fields[0];
 	    my $hacker		  = $fields[1];
@@ -300,17 +302,19 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    push @process, $line unless (defined $entries{$syn}{GOI});
 		    $entries{$gene}{GOI} = $entries{$syn}{GOI} if (defined $entries{$syn}{GOI} && !defined $entries{$gene}{GOI});
 		}
+		push @process, $line unless (defined $entries{$gene}{GOI});
 	    }
 	}
     }
     elsif ($filetoparse =~ /apg/){
 	print STDERR "Processing APG List!\n";
-	foreach(@process){
-	    next unless ($_ =~ /.apg./);
-	    (my $line	  = $_) =~ s/,w+//g;
+	while (@process) {
+	    my $item = shift(@process);
+	    print STDERR $#process,"\n";
+	    next unless ($item =~ /.apg./);
+	    (my $line	  = $item) =~ s/,w+//g;
 	    my @fields		  = split(/\;/,$line);
 	    my $apg		  = $fields[0];
 	    my $hacker		  = $fields[1];
@@ -401,9 +405,9 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    push @process, $line unless (defined $entries{$syn}{APG});
 		    $entries{$gene}{APG} = $entries{$syn}{APG} if (defined $entries{$syn}{APG} && !defined $entries{$gene}{APG});
 		}
+		push @process, $line unless (defined $entries{$gene}{APG});
 	    }
 	}
     }
