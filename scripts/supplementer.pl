@@ -454,13 +454,22 @@ sub image_entry{
     }else{
         my @file = split ("/", $file);
         my $filename = $file[2];
-        $filename =~ s/.svg/.png/;
-        $filename =~ s/.eps/.png/;
-        my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
-        my $imagelink = $wdir . "/" . $dir ."/". $file;
-        my $thumblink = "./" ."thumbs/" . "$filename";
-        `convert $imagelink -resize 150x150! $thumblink` unless (-e $thumblink || !-e $imagelink);
-        $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
+        if($filename =~/.svg/){
+            $filename =~ s/.svg/.png/;
+            my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
+            my $imagelink = $wdir . "/" . $dir ."/". $file;
+            my $thumblink = "./" ."thumbs/" . "$filename";
+            `inkscape --file=$imagelink --export-width=150 --export-height=150 --without-gui --export-png=$thumblink` unless (-e $thumblink || !-e $imagelink);
+            $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
+        }
+        if($filename =~/.eps/){
+            $filename =~ s/.eps/.png/;
+            my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
+            my $imagelink = $wdir . "/" . $dir ."/". $file;
+            my $thumblink = "./" ."thumbs/" . "$filename";
+            `convert $imagelink -resize 150x150! $thumblink` unless (-e $thumblink || !-e $imagelink);
+            $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
+        }
     }
     return $image_entry;
 }
