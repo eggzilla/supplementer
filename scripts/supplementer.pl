@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 21:58:40 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 22:01:39 fall> by joerg
 
 ###############
 ###Use stuff
@@ -112,7 +112,7 @@ sub make_supplements{
     #create html directory structure
     my %genelist;
     my @parseit = ('GOI', 'APG', 'EXPRESSION');
-    foreach my $gene( sort keys %gois ){
+    foreach my $gene( sort {$a eq $b} keys %gois ){
 	foreach my $from (@parseit){
 	    next unless (defined $gois{$gene}{$from}{ID});
 #	    print STDERR "Making $from for $gene\n";
