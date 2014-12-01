@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 20:43:51 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 20:51:42 fall> by joerg
 
 ###############
 ###Use stuff
@@ -93,7 +93,7 @@ make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-#    print Dumper(\%gois);
+    print Dumper(\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
@@ -456,7 +456,7 @@ sub image_entry{
         my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
         my $imagelink = $wdir . "/" . $dir ."/". $file;
         my $thumblink = "./" ."thumbs/" . "$filename";
-        `convert $imagelink -resize 150x150! $thumblink`;
+        `convert $imagelink -resize 150x150! $thumblink` unless (-e $thumblink);
         $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
     }
     return $image_entry;
