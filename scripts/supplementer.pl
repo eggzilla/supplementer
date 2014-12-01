@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 20:51:42 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 21:33:23 fall> by joerg
 
 ###############
 ###Use stuff
@@ -216,16 +216,18 @@ sub read_tables{
 	    my @fields		  = split(/\;/,$line);
 	    my $goi		  = $fields[0];
 	    my $hacker		  = $fields[1];
+	    next if ($hacker eq 'OPTIONAL');
 	    my $gene		  = $fields[2];
 	    next if (defined $entries{$gene}{GOI}{ID});
 
 	    my $duplicate	  = $fields[3];   
-	    my @synonyms	  = split(/[,\s]+/,$fields[4]);
+#	    my @synonyms	  = split(/[,\s]+/,$fields[4]);
+	    my @synonyms	  = split(/[,]+|[\s]{2,}|\t/,$fields[4]);
 	    push @synonyms, $gene unless ($synonyms[0]);
 	    if ($duplicate eq '' || $duplicate == 0 || ($duplicate && $fields[8] ne '')){
-		my @pathways	      = split(",",$fields[5]) if ($fields[5] ne '');
+		my @pathways	      = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[5]) if ($fields[5] ne '');
 		push @pathways, 'Unknown' unless ($pathways[0]);
-		my @literature	      = split(",",$fields[6]) if ($fields[6] ne '');
+		my @literature	      = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[6]) if ($fields[6] ne '');
 		push @literature, 'Unknown' unless ($literature[0]);
 		my $igvs	      = (split(/[:,\s\/]+/,$fields[7],2))[0] || '0';
 		$igvs = 0 if ($igvs =~ /todo/i);
@@ -318,16 +320,17 @@ sub read_tables{
 	    my @fields		  = split(/\;/,$line);
 	    my $apg		  = $fields[0];
 	    my $hacker		  = $fields[1];
+	    next if ($hacker eq 'OPTIONAL');
 	    my $gene		  = $fields[2];
 	    next if (defined $entries{$gene}{APG}{ID});
 
 	    my $duplicate	  = $fields[3];   
-	    my @synonyms	  = split(/[,\s]+/,$fields[4]);
+	    my @synonyms	  = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[4]);
 	    push @synonyms, $gene unless ($synonyms[0]);
 	    if ($duplicate eq '' || $duplicate == 0){
-		my @pathways	      = split(/[:,]+/,$fields[5]) if ($fields[5] ne '');
+		my @pathways	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[5]) if ($fields[5] ne '');
 		push @pathways, 'Unknown' unless ($pathways[0]);
-		my @literature	      = split(/[:,]+/,$fields[6]) if ($fields[6] ne '');
+		my @literature	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[6]) if ($fields[6] ne '');
 		push @literature, 'Unknown' unless ($literature[0]);
 		my $igvs	      = (split(/[:,\s\/]+/,$fields[7],2))[0] || '0';
 		$igvs = 0 if ($igvs =~ /todo/i);
@@ -456,7 +459,7 @@ sub image_entry{
         my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
         my $imagelink = $wdir . "/" . $dir ."/". $file;
         my $thumblink = "./" ."thumbs/" . "$filename";
-        `convert $imagelink -resize 150x150! $thumblink` unless (-e $thumblink);
+        `convert $imagelink -resize 150x150! $thumblink` unless (-e $thumblink || !-e $imagelink);
         $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
     }
     return $image_entry;
