@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 22:01:39 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 22:14:23 fall> by joerg
 
 ###############
 ###Use stuff
@@ -93,7 +93,7 @@ make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-    print Dumper(\%gois);
+#print Dumper(\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
@@ -125,9 +125,9 @@ sub make_supplements{
 	    my ($cufflinks, $maxy);
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
 		$cufflinks .= $sample.":";
-		$cufflinks .= join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}}) if (defined $gois{$gene}{$from}{CUFFLINKS});
+		$cufflinks .= join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample});
 		$maxy .= $sample.":";
-		$maxy .= join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}}) if (defined $gois{$gene}{$from}{PEAKS});
+		$maxy .= join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample});
 	    }
 	    ($cufflinks, $maxy) = ('NA','NA') unless defined ($cufflinks && $maxy);
             my $igv = image_entry(${$gois{$gene}{$from}{IGV}}[0],$dir,$odir);
@@ -223,12 +223,12 @@ sub read_tables{
 
 	    my $duplicate	  = $fields[3];   
 #	    my @synonyms	  = split(/[,\s]+/,$fields[4]);
-	    my @synonyms	  = split(/[,]+|[\s]{2,}|\t/,$fields[4]);
+	    (my @synonyms	  = split(/[,]+|[\s]{2,}|\t/,$fields[4])) =~ s/, /,/g;
 	    push @synonyms, $gene unless ($synonyms[0]);
 	    if ($duplicate eq '' || $duplicate == 0 || ($duplicate && $fields[8] ne '')){
-		my @pathways	      = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[5]) if ($fields[5] ne '');
+		(my @pathways = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[5])) =~ s/, /,/g if ($fields[5] ne '');
 		push @pathways, 'Unknown' unless ($pathways[0]);
-		my @literature	      = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[6]) if ($fields[6] ne '');
+		(my @literature	      = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[6])) =~ s/, /,/g  if ($fields[6] ne '');
 		push @literature, 'Unknown' unless ($literature[0]);
 		my $igvs	      = (split(/[:,\s\/]+/,$fields[7],2))[0] || '0';
 		$igvs = 0 if ($igvs =~ /todo|NA/i);
@@ -327,12 +327,12 @@ sub read_tables{
 	    next if (defined $entries{$gene}{APG}{ID});
 
 	    my $duplicate	  = $fields[3];   
-	    my @synonyms	  = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[4]);
+	    (my @synonyms	  = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[4])) =~ s/, /,/g;
 	    push @synonyms, $gene unless ($synonyms[0]);
 	    if ($duplicate eq '' || $duplicate == 0){
-		my @pathways	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[5]) if ($fields[5] ne '');
+		(my @pathways	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[5])) =~ s/, /,/g  if ($fields[5] ne '');
 		push @pathways, 'Unknown' unless ($pathways[0]);
-		my @literature	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[6]) if ($fields[6] ne '');
+		(my @literature	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[6])) =~ s/, /,/g  if ($fields[6] ne '');
 		push @literature, 'Unknown' unless ($literature[0]);
 		my $igvs	      = (split(/[:,\s\/]+/,$fields[7],2))[0] || '0';
 		$igvs = 0 if ($igvs =~ /todo|NA/i);
