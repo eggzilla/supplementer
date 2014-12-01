@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-11-30 01:08:34 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 20:26:42 fall> by joerg
 
 ###############
 ###Use stuff
@@ -300,8 +300,8 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    push @process, $line unless ($entries{$syn}{GOI});
-		    $entries{$gene}{GOI} = $entries{$syn}{GOI} if ($entries{$syn}{GOI});
+		    push @process, $line unless (defined $entries{$syn}{GOI});
+		    $entries{$gene}{GOI} = $entries{$syn}{GOI} if (defined $entries{$syn}{GOI} && !defined $entries{$gene}{GOI});
 		}
 	    }
 	}
@@ -401,11 +401,11 @@ sub read_tables{
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    push @process, $line unless ($entries{$syn}{APG});
-		    $entries{$gene}{APG}=$entries{$syn}{APG} if ($entries{$syn}{APG});
+		    push @process, $line unless (defined $entries{$syn}{APG});
+		    $entries{$gene}{APG} = $entries{$syn}{APG} if (defined $entries{$syn}{APG} && !defined $entries{$gene}{APG});
 		}
 	    }
-	}	
+	}
     }
     return (\%entries);
 }
