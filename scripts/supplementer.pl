@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 21:47:23 fall> by joerg
+### Last changed Time-stamp: <2014-12-01 21:58:40 fall> by joerg
 
 ###############
 ###Use stuff
@@ -231,7 +231,7 @@ sub read_tables{
 		my @literature	      = split(/[,]+|[,]+|[\s]{2,}|\t/,$fields[6]) if ($fields[6] ne '');
 		push @literature, 'Unknown' unless ($literature[0]);
 		my $igvs	      = (split(/[:,\s\/]+/,$fields[7],2))[0] || '0';
-		$igvs = 0 if ($igvs =~ /todo/i);
+		$igvs = 0 if ($igvs =~ /todo|NA/i);
 		my $mock	      = $fields[8];
 		my $ebola	      = $fields[9];
 		my $marburg	      = $fields[10];
@@ -242,12 +242,12 @@ sub read_tables{
 		my $raemarburg	      = $fields[15];
 		my $raeprofile	      = $fields[16];
 		my $ucscs	      = (split(/[:,\s\/]+/,$fields[17],2))[0] || '0';
-		$ucscs = 0 if ($ucscs =~ /todo/i);
+		$ucscs = 0 if ($ucscs =~ /todo|NA/i);
 		my $ucsc_conservation = $fields[18];
 		my $hg_SNPs	      = $fields[19];
 		my $rae_SNPs	      = $fields[20];
 		my $sashimi	      = (split(/[:,\s\/]+/,$fields[21],2))[0] || '0';
-		$sashimi = 0 if ($sashimi =~ /todo/i);
+		$sashimi = 0 if ($sashimi =~ /todo|NA/i);
 		my $hg_intron	      = $fields[22];
 		my $rae_intron	      = $fields[23];
 		my $hg_5utr	      = $fields[24];
@@ -311,14 +311,15 @@ sub read_tables{
 	    }
 	}
     }
-    elsif ($filetoparse =~ /apg/){
+    elsif ($filetoparse =~ /apg/i){
 	print STDERR "Processing APG List!\n";
 	while (@process) {
 	    my $item = shift(@process);
-	    print STDERR $#process,"\n";
 	    next unless ($item =~ /.apg./);
 	    (my $line	  = $item) =~ s/,w+//g;
 	    my @fields		  = split(/\;/,$line);
+#Folder_ID;Hacker-Name;Gen;Duplicates?;Synonyms;Pathway;Literature;Screen IGV;Scale;Diff. Mock;Diff. Ebola;Diff. Marburg;Profile change;found?;Diff. Mock;Diff. Ebola;Diff. Marburg;Profile Change;Screen UCSC;UCSC Conservation;SNPs;SNPs;Sashimi plot;Intron transcripts;Intron transcripts;Upstream, 5'UTR;Downstream, 3'UTR;Extra Screens and why;Notes;Empty Entries?;Text Draft DONE;done.sh;Questions?;Done Lit Team / Done Questions;FRANZI FINAL CHECK;VERENA;STATE
+#hg19.apg.00209;Stefanie W.;ABCA1;0;;;;4;0-376;ed;u17d;dd;0;1;00;00;00;low expression;1;11111;0;0;4;0;0;0;0;0;COOL:  significantly downregulated in EBOV23h (327-390-22);#VALUE!;1;1;0;;1;transport molecules across extra and intracellular membranes;CHECKED
 	    my $apg		  = $fields[0];
 	    my $hacker		  = $fields[1];
 	    next if ($hacker eq 'OPTIONAL');
@@ -334,7 +335,7 @@ sub read_tables{
 		my @literature	      = split(/[, ]+|[,]+|[\s]{2,}|\t/,$fields[6]) if ($fields[6] ne '');
 		push @literature, 'Unknown' unless ($literature[0]);
 		my $igvs	      = (split(/[:,\s\/]+/,$fields[7],2))[0] || '0';
-		$igvs = 0 if ($igvs =~ /todo/i);
+		$igvs = 0 if ($igvs =~ /todo|NA/i);
 		my $scale             = $fields[8] || '0';
 		my $mock	      = $fields[9];
 		my $ebola	      = $fields[10];
@@ -345,13 +346,13 @@ sub read_tables{
 		my $raeebola	      = $fields[15];
 		my $raemarburg	      = $fields[16];
 		my $raeprofile	      = $fields[17];
-		my $ucscs	      = (split(/[:,\s\/]+/,$fields[17],2))[0] || '0';
-		$ucscs = 0 if ($ucscs =~ /todo/i);
+		my $ucscs	      = (split(/[:,\s\/]+/,$fields[18],2))[0] || '0';
+		$ucscs = 0 if ($ucscs =~ /todo|NA/i);
 		my $ucsc_conservation = $fields[19];
 		my $hg_SNPs	      = $fields[20];
 		my $rae_SNPs	      = $fields[21];
-		my $sashimi	      = (split(/[:,\s\/]+/,$fields[21],2))[0] || '0';
-		$sashimi = 0 if ($sashimi =~ /todo/i);
+		my $sashimi	      = (split(/[:,\s\/]+/,$fields[22],2))[0] || '0';
+		$sashimi = 0 if ($sashimi =~ /todo|NA/i);
 		my $hg_intron	      = $fields[23];
 		my $rae_intron	      = $fields[24];
 		my $hg_5utr	      = $fields[25];
@@ -360,7 +361,7 @@ sub read_tables{
 		my $notes	      = $fields[28];
 		
 		$entries{$gene}{APG}{ID}  = $apg;
-		push @{$entries{$gene}{APG}{SYNONYMS}} = @synonyms;
+		push @{$entries{$gene}{APG}{SYNONYMS}},  @synonyms;
 		push @{$entries{$gene}{APG}{PATHWAY}}, @pathways;
 		push @{$entries{$gene}{APG}{LITERATURE}}, @literature;   
 		$entries{$gene}{APG}{NAME} =	$gene;
