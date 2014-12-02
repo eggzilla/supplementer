@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-01 22:34:49 fall> by joerg
+### Last changed Time-stamp: <2014-12-02 22:18:58 fall> by joerg
 
 ###############
 ###Use stuff
@@ -112,10 +112,11 @@ sub make_supplements{
     #create html directory structure
     my %genelist;
     my @parseit = ('GOI', 'APG', 'EXPRESSION');
-    foreach my $gene( sort {$a eq $b} keys %gois ){
+#    my @sorted_genes = 	map { $_->[0] } sort { $a->[1] cmp $b->[1] } map { [ $_, uc($_) ] } keys %gois;
+    foreach my $gene( sort {lc($a) cmp lc($b)} keys %gois ){
+#    foreach my $gene( @sorted_genes ){
 	foreach my $from (@parseit){
 	    next unless (defined $gois{$gene}{$from}{ID});
-#	    print STDERR "Making $from for $gene\n";
 	    my $goi = $gois{$gene}{$from}{ID};	
 	    #construct gene of interest goi.html
 	    my $goi_path = "$goi.html";
@@ -126,7 +127,6 @@ sub make_supplements{
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
 		$cufflinks .= $sample.":";
 		$cufflinks .= join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample});
-#print STDERR "SAMPLE:$gene\t$from\t$sample\n";
 		$maxy .= $sample.":";
 		$maxy .= join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample});
 	    }
