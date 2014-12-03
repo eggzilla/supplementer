@@ -1,3 +1,116 @@
+<!--
+    This is a list of fields that have to be processed in the gio.html template, 
+    Three analysis, Expression, Comparison and Timepoints with multiple samples,
+    each sample has multiple conditions
+    Sample is the name of the file (organism_condition1_condition2),
+    condx are the conditions (ebov, marv, mock),
+    Sample can be used to name the tables (What is now Cufflinkstable,maxytable,Expressiontable1-10)
+    condx can be used to name the fields (What is now not there, but we should introduce it, like ID, NAME, Synonyms in main table)
+
+		name
+		synonyms	  
+		goiid		  
+		textxt		  
+		igv		  
+		sashimi		  
+		ucsc		  
+		additionalplots	  
+##sample1
+		sample		  
+##sample 1 condition1
+		condone		  
+		maxy		  
+		cufflinks	  
+##sample1 condition2
+		condtwo		  
+ 		maxy_two	  
+		cufflinks_two	  
+##sample2
+		sampleone	  
+##sample 2 condition1
+		condoone	  
+		maxyo		  
+		cufflinkso	  
+##sample 2 condition2
+		condotwo	  
+		maxyo_two	  
+		cufflinkso_two	  
+##sample 3
+		sampletwo	  
+##sample 3 condition1
+		condtone	  
+		maxyt		  
+		cufflinkst	  
+##sample 3 condition2
+		condttwo	  
+		maxyo_two	  
+		cufflinkst_two	  
+###Comparison
+##sample1
+		csample		  
+##sample 1 condition1
+		ccondone	  
+		cmaxy		  
+		ccufflinks	  
+##sample1 condition2
+		ccondtwo	  
+ 		cmaxy_two	  
+		ccufflinks_two	  
+##sample2
+		csampleone	  
+##sample 2 condition1
+		ccondoone	  
+		cmaxyo		  
+		ccufflinkso	  
+##sample 2 condition2
+		ccondotwo	  
+		cmaxyo_two	  
+		ccufflinkso_two	  
+### Timepoints
+##sample1
+		tsample		  
+##sample 1 condition1
+		tcondone	  
+		tmaxy		  
+		tcufflinks	  
+##sample1 condition2
+		tcondtwo	  
+ 		tmaxy_two	  
+		tcufflinks_two	  
+##sample1 condition3
+		tcondthree	  
+ 		tmaxy_three	  
+		tcufflinks_three  
+##sample2
+		tsampleone	  
+##sample 2 condition1
+		tcondoone	  
+		tmaxyo		  
+		tcufflinkso	  
+##sample 2 condition2
+		tcondotwo	  
+		tmaxyo_two	  
+		tcufflinkso_two	  
+##sample 2 condition3
+		tcondthree	  
+		tmaxyo_three	  
+		tcufflinkso_three 
+##sample 3
+		tsampletwo	  
+##sample 3 condition1
+		tcondtone	  
+		tmaxyt		  
+		tcufflinkst	  
+##sample 3 condition2
+		tcondttwo	  
+		tmaxyo_two	  
+		tcufflinkst_two	  	
+##sample 3 condition3
+		tcondtthree	  
+		tmaxyo_three	  
+		tcufflinkst_three      
+-->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -14,25 +127,25 @@
           ID
         </td>
          <td>
-          name 
+          NAME
         </td>
         <td>
-          synonyms
+	  SYNONYMS
         </td>
         <td>
-          tex-file 
+          TEX-file 
         </td>
         <td>
-          igv-image
+          IGV-image
         </td>
         <td>
-          sashimi-image
+          Sashimi-image
         </td>
         <td>
-          ucsc-image
+          UCSC-image
         </td>
         <td>
-          additionalplots 
+          Additional Plots 
         </td>
       </tr>
       <tr>

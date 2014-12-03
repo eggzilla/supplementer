@@ -1,4 +1,101 @@
+<!--
+    This is a list of fields that have to be processed in the index.html template, 
+    Only a subset of goi.html per gene, should be presented in a long, sortable list
+    Three analysis, Expression, Comparison and Timepoints with multiple samples,
+    each sample has multiple conditions
+    Sample is the name of the file (organism_condition1_condition2),
+    condx are the conditions (ebov, marv, mock),
+    Sample can be used to name the tables (What is now Cufflinkstable,maxytable,Expressiontable1-10)
+    condx can be used to name the fields (What is now not there, but we should introduce it, like ID, NAME, Synonyms in main table)
+		name
+		synonyms	  
+		igv		  
+		sashimi		  
+		ucsc		  
+		additionalplots	  
+##sample1
+		sample		  
+##sample 1 condition1
+		condone		  
+		maxy		  
+##sample1 condition2
+		condtwo		  
+ 		maxy_two	  
+##sample2
+		sampleone	  
+##sample 2 condition1
+		condoone	  
+		maxyo		  
+##sample 2 condition2
+		condotwo	  
+		maxyo_two	  
+##sample 3
+		sampletwo	  
+##sample 3 condition1
+		condtone	  
+		maxyt		  
+##sample 3 condition2
+		condttwo	  
+		maxyo_two	  
+###Comparison
+##sample1
+		csample		  
+##sample 1 condition1
+		ccondone	  
+		cmaxy		  
+##sample1 condition2
+		ccondtwo	  
+ 		cmaxy_two	  
+##sample2
+		csampleone	  
+##sample 2 condition1
+		ccondoone	  
+		cmaxyo		  
+##sample 2 condition2
+		ccondotwo	  
+		cmaxyo_two	  
+### Timepoints
+##sample1
+		tsample		  
+##sample 1 condition1
+		tcondone	  
+		tmaxy		  
+##sample1 condition2
+		tcondtwo	  
+ 		tmaxy_two	  
+##sample1 condition3
+		tcondthree	  
+ 		tmaxy_three	  
+##sample2
+		tsampleone	  
+##sample 2 condition1
+		tcondoone	  
+		tmaxyo		  
+##sample 2 condition2
+		tcondotwo	  
+		tmaxyo_two	  
+##sample 2 condition3
+		tcondthree	  
+		tmaxyo_three	  
+##sample 3
+		tsampletwo	  
+##sample 3 condition1
+		tcondtone	  
+		tmaxyt		  
+##sample 3 condition2
+		tcondttwo	  
+		tmaxyo_two	  
+##sample 3 condition3
+		tcondtthree	  
+		tmaxyo_three	  
+-->
+
 <!DOCTYPE html>
+<!--
+    Here we should include a jquery sort list javascript
+
+
+-->
 <html lang="en">
   <head>
     <meta charset="utf-8">
