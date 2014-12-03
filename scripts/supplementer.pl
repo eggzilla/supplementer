@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-03 22:19:41 fall> by joerg
+### Last changed Time-stamp: <2014-12-03 23:48:53 fall> by joerg
 
 ###############
 ###Use stuff
@@ -129,21 +129,53 @@ sub make_supplements{
 	    my $goi_file = "goi.html";
 	    my $name = $gene;
 	    $genelist{$name}=$goi;
-	    my (@samples, @deg, @max, @fold) = ();
-	    my ($cufflinks, $maxy, $fold_change);
+### Parse Expression
+	    my (@samp, @condi, @deg, @max, @fold) = ();
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
-		$fold_change = join(",",@{$gois{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG});
+		my $fold_change = join(",",@{$gois{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG});
+		push @fold, $fold_change;
+		push @samp, $sample;
 		foreach my $condition (keys %{$gois{$gene}{$from}{CUFFLINKS}{$sample}} ){
-#		    $cufflinks .= $condition.":";
-		    $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition});
-#		    $maxy .= $sample.":";
-		    $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    my $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition});
+		    my $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    push @deg, $cufflinks;
 		    push @max, $maxy;
-		    push @samples, $condition;
+		    push @condi, $condition;
 		}
 	    }
-#	    ($cufflinks, $maxy, $fold_change) = ('NA','NA','NA') unless defined ($cufflinks && $maxy && $fold_change);
+
+### Parse Comparison
+	    my (@csamp, @ccondi, @cdeg, @cmax, @cfold) = ();
+	    foreach my $sample (keys %{$gois{$gene}{$from}{HB}} ){
+		my $cfold_change = join(",",@{$entries{$gene}{$goto}{CLOGEXPRESSION}{$sample}{LOG}});
+		push @cfold, $cfold_change;
+		push @csamp, $sample;
+		foreach my $condition (keys %{$gois{$gene}{$from}{HB}{$sample}} ){
+		    my $cufflinks = join(",",@{$gois{$gene}{$from}{HB}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{HB}{$sample}{$condition});
+		    push @cdeg, $cufflinks;	    
+		    push @ccondi, $condition;
+		}
+		foreach my $condition (keys %{$gois{$gene}{$from}{CPEAKS}{$sample}} ){
+		    my $maxy = join(",",@{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CPEAKS}{$sample}{$condition});
+		    push @cmax, $maxy;
+		}
+	    }
+
+### Parse Timepoints
+	    my (@tsamp, @tcondi, @tdeg, @tmax, @tfold) = ();
+	    foreach my $sample (keys %{$gois{$gene}{$from}{MEV}} ){
+		push @tsamp, $sample;
+		foreach my $condition (keys %{$gois{$gene}{$from}{MEV}{$sample}} ){
+		    my $cufflinks = join(",",@{$gois{$gene}{$from}{MEV}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{MEV}{$sample}{$condition});
+		    my $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    my $fold_change = join(",",@{$gois{$gene}{$goto}{TLOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$goto}{TLOGEXPRESSION}{$sample}{LOG});
+		    push @tdeg, $cufflinks;
+		    push @tmax, $maxy;
+		    push @tfold, $fold_change;
+		    push @tcondi, $condition;
+		}
+	    }
+	    
             my $igv = image_entry(${$gois{$gene}{$from}{IGV}}[0],$dir,$odir);
             my $sashimi = image_entry(${$gois{$gene}{$from}{SASHIMI}}[0],$dir,$odir);
             my $ucsc = image_entry(${$gois{$gene}{$from}{UCSC}}[0],$dir,$odir);
@@ -151,45 +183,108 @@ sub make_supplements{
 	    (my $syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g;
 	    my $goi_vars = 
 	    {   
-		name => $gois{$gene}{$from}{NAME},
-		synonyms => $syn,
-		goiid => $gois{$gene}{$from}{ID},
-		textxt => $tex_link,
-		igv => $igv,
-		sashimi => $sashimi,
-		ucsc => $ucsc,
-		additionalplots => $gois{$gene}{$from}{EXTRA},
+		name		  => $gois{$gene}{$from}{NAME},
+		synonyms	  => $syn,
+		goiid		  => $gois{$gene}{$from}{ID},
+		textxt		  => $tex_link,
+		igv		  => $igv,
+		sashimi		  => $sashimi,
+		ucsc		  => $ucsc,
+		additionalplots	  => $gois{$gene}{$from}{EXTRA},
 ##sample1
-		sample => $samples[0],
+		sample		  => $samp[0],
 ##sample 1 condition1
-		condone => $samples[0],
-		maxy => $maxy[0],
-		cufflinks => $cufflinks[0],
+		condone		  => $condi[0],
+		maxy		  => $maxy[0],
+		cufflinks	  => $deg[0],
 ##sample1 condition2
-		condtwo => $samples[1],
- 		maxy_two => $maxy[1],
-		cufflinks_two => $cufflinks[1],
+		condtwo		  => $condi[1],
+ 		maxy_two	  => $maxy[1],
+		cufflinks_two	  => $deg[1],
 ##sample2
-		sampleone => $sample[1],
+		sampleone	  => $samp[1],
 ##sample 2 condition1
-		condoone => $samples[2],
-		maxyo => $maxy[2],
-		cufflinkso => $cufflinks[2],
+		condoone	  => $condi[2],
+		maxyo		  => $maxy[2],
+		cufflinkso	  => $deg[2],
 ##sample 2 condition2
-		condotwo => $samples[3],
-		maxyo_two => $maxy[3],
-		cufflinkso_two => $cufflinks[3],
+		condotwo	  => $condi[3],
+		maxyo_two	  => $maxy[3],
+		cufflinkso_two	  => $deg[3],
 ##sample 3
-		sampletwo => $sample[2],
+		sampletwo	  => $samp[2],
 ##sample 3 condition1
-		condtone => $samples[4],
-		maxyt => $maxy[4],
-		cufflinkst => $cufflinks[4],
+		condtone	  => $condi[4],
+		maxyt		  => $maxy[4],
+		cufflinkst	  => $deg[4],
 ##sample 3 condition2
-		condttwo => $samples[5],
-		maxyo_two => $maxy[5],
-		cufflinkst_two => $cufflinks[5],
-
+		condttwo	  => $condi[5],
+		maxyo_two	  => $maxy[5],
+		cufflinkst_two	  => $deg[5],
+###Comparison
+##sample1
+		csample		  => $csamp[0],
+##sample 1 condition1
+		ccondone	  => $ccondi[0],
+		cmaxy		  => $cmaxy[0],
+		ccufflinks	  => $cdeg[0],
+##sample1 condition2
+		ccondtwo	  => $ccondi[1],
+ 		cmaxy_two	  => $cmaxy[1],
+		ccufflinks_two	  => $cdeg[1],
+##sample2
+		csampleone	  => $csample[1],
+##sample 2 condition1
+		ccondoone	  => $ccondi[2],
+		cmaxyo		  => $cmaxy[2],
+		ccufflinkso	  => $cdeg[2],
+##sample 2 condition2
+		ccondotwo	  => $ccondi[3],
+		cmaxyo_two	  => $cmaxy[3],
+		ccufflinkso_two	  => $cdeg[3],
+### Timepoints
+##sample1
+		tsample		  => $tsample[0],
+##sample 1 condition1
+		tcondone	  => $tcondi[0],
+		tmaxy		  => $tmaxy[0],
+		tcufflinks	  => $tdeg[0],
+##sample1 condition2
+		tcondtwo	  => $tcondi[1],
+ 		tmaxy_two	  => $tmaxy[1],
+		tcufflinks_two	  => $tdeg[1],
+##sample1 condition3
+		tcondthree	  => $tcondi[2],
+ 		tmaxy_three	  => $tmaxy[2],
+		tcufflinks_three  => $tdeg[2],
+##sample2
+		tsampleone	  => $tsample[1],
+##sample 2 condition1
+		tcondoone	  => $tcondi[3],
+		tmaxyo		  => $tmaxy[3],
+		tcufflinkso	  => $tdeg[3],
+##sample 2 condition2
+		tcondotwo	  => $tcondi[4],
+		tmaxyo_two	  => $tmaxy[4],
+		tcufflinkso_two	  => $tdeg[4],
+##sample 2 condition3
+		tcondthree	  => $tcondi[5],
+		tmaxyo_three	  => $tmaxy[5],
+		tcufflinkso_three => $tdeg[5],
+##sample 3
+		tsampletwo	  => $tsample[2],
+##sample 3 condition1
+		tcondtone	  => $tcondi[6],
+		tmaxyt		  => $tmaxy[6],
+		tcufflinkst	  => $tdeg[6],
+##sample 3 condition2
+		tcondttwo	  => $tcondi[7],
+		tmaxyo_two	  => $tmaxy[7],
+		tcufflinkst_two	  => $tdeg[7],		
+##sample 3 condition3
+		tcondtthree	  => $tcondi[8],
+		tmaxyo_three	  => $tmaxy[8],
+		tcufflinkst_three => $tdeg[8]
 	    };
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
@@ -218,7 +313,7 @@ sub parse_expression{
 #HG19 MARV vs RAE MARV
     my $filetoparse = $_[0];
     (my $sample = $filetoparse) =~ s/\.csv//;
-    my @samples = split(/_/,$filetoparse);
+    my @samples = split(/_/,$sample);
     my %entries	    = %{$_[1]};
     print STDERR "Expression parsing $sample!\n";
     open (LIST,"<","$filetoparse");
@@ -250,17 +345,17 @@ sub parse_comparison{
 #HG19 RAE Mock
 #HG19 RAE MARV
 #HG19 RAE EBOV
-##Gene	basemean HuH7-3h	basemean HuH7-7h	basemean HuH7-23h	basemean R06E-J-3h	basemean R06E-J-7h	basemean R06E-J-23h	log2(fc) 3h	log2(fc) 7h	log2(fc) 23h	padj	peak HuH7-3h	peak HuH7-7h	peak HuH7-23h	peak R06E-J-3h	peak R06E-J-7h	peak R06E-J-23h
+##Gene basemean HuH7-3h basemean HuH7-7h basemean HuH7-23h basemean R06E-J-3h basemean R06E-J-7h basemean R06E-J-23h log2(fc) 3h log2(fc) 7h log2(fc) 23h padj	peak HuH7-3h peak HuH7-7h peak HuH7-23h	peak R06E-J-3h peak R06E-J-7h peak R06E-J-23h
     my $filetoparse = $_[0];
     (my $sample = $filetoparse) =~ s/\.csv//;
-    my @samples = split(/_/,$filetoparse);
+    my @samples = split(/_/,$sample);
     my %entries	    = %{$_[1]};
     print STDERR "Expression parsing $sample!\n";
     open (LIST,"<","$filetoparse");
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
-	my ($gene, $mb3, $mb7, $mb23, $eb3, $eb7, $eb23, $l3, $l7, $l23, $max, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23) = split(/\t/,$line);
+	my ($gene, $hg3, $hg7, $hg23, $rae3, $rae7, $rae23, $l3, $l7, $l23, $max, $hgp3, $hgp7, $hgp23, $raep3, $raep7, $raep23) = split(/\t/,$line);
 	my $goto;
 	if (defined $entries{$gene}{GOI}){
 	    $goto = "GOI";
@@ -271,12 +366,12 @@ sub parse_comparison{
 	else{
 	    $goto = "COMPARISON";
 	}
-	push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{$samples[1]}}, ($mb3, $mb7, $mb23);
-	push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{$samples[2]}}, ($eb3, $eb7, $eb23);
-	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
-	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
-	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
-	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
+	push @{$entries{$gene}{$goto}{HB}{$sample}{$samples[0]."\_".$samples[2]}}, ($hg3, $hg7, $hg23);
+	push @{$entries{$gene}{$goto}{HB}{$sample}{$samples[1]."\_".$samples[2]}}, ($rae3, $rae7, $rae23);
+	push @{$entries{$gene}{$goto}{CLOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
+	push @{$entries{$gene}{$goto}{CMAX}{$sample}{PVAL}}, $max;
+	push @{$entries{$gene}{$goto}{CPEAKS}{$sample}{$samples[0]."\_".$samples[2]}}, ($hgp3, $hgp7, $hgp23);
+	push @{$entries{$gene}{$goto}{CPEAKS}{$sample}{$samples[1]."\_".$samples[2]}}, ($raep3, $raep7, $raep23);
     }
     return (\%entries);
 }
@@ -284,15 +379,17 @@ sub parse_comparison{
 sub parse_timepoints{
 #rae_timepoints.csv
 #hg19_timepoints.csv
+##Gene	MOCK basemean 3h	MOCK basemean 7h	MOCK basemean 23h	EBOV basemean 3h	EBOV basemean 7h	EBOV basemean 23h	MARV basemean 3h	MARV basemean 7h	MARV basemean 23h	MOCK log2(fc) 3hvs7h	MOCK log2(fc) 3hvs23h	MOCK log2(fc) 7hvs23h	EBOV log2(fc) 3hvs7h	EBOV log2(fc) 3hvs23h	EBOV log2(fc) 7hvs23h	MARV log2(fc) 3hvs7h	MARV log2(fc) 3hvs23h	MARV log2(fc) 7hvs23h	padj(max(fc)	MOCK peak 3h	MOCK peak 7h	MOCK peak 23h	EBOV peak 3h	EBOV peak 7h	EBOV peak 23h	MARV peak 3h	MARV peak 7h	MARV peak 23h
     my $filetoparse = $_[0];
-    my @tmp = (split(/\./,$filetoparse))[0];
+    (my $sample = $filetoparse) =~ s/\.csv//;
+    my @samples = split(/_/,$sample);
     my %entries	    = %{$_[1]};
     print STDERR "Expression parsing $sample!\n";
     open (LIST,"<","$filetoparse");
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
-	my ($gene, $mb3, $mb7, $mb23, $eb3, $eb7, $eb23, $l3, $l7, $l23, $max, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23) = split(/\t/,$line);
+	my ($gene, $mb3, $mb7, $mb23, $eb3, $eb7, $eb23, $mv3, $mv7, $mv23, $ml3, $ml7, $ml23, $el3, $el7, $el23, $vl3, $vl7, $vl23, $max, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23, $vp3, $vp7, $vp23) = split(/\t/,$line);
 	my $goto;
 	if (defined $entries{$gene}{GOI}){
 	    $goto = "GOI";
@@ -301,12 +398,18 @@ sub parse_timepoints{
 	    $goto = "APG";
 	}
 	else{
-	    $goto = "EXPRESSION";
+	    $goto = "TIMEPOINTS";
 	}
-	push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}}, ($mb3, $mb7, $mb23, $eb3, $eb7, $eb23);
-	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}}, ($l3, $l7, $l23);
-	push @{$entries{$gene}{$goto}{MAX}{$sample}}, $max;
-	push @{$entries{$gene}{$goto}{PEAKS}{$sample}}, ($mp3, $mp7, $mp23, $ep3, $ep7, $ep23);
+	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]."\_".$samples[2]}}, ($mb3, $mb7, $mb23);
+	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[1]."\_".$samples[2]}}, ($eb3, $eb7, $eb23);
+	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[1]."\_".$samples[2]}}, ($mv3, $mv7, $mv23);
+	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{LOG}}, ($ml3, $ml7, $ml23);
+	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{LOG}}, ($el3, $el7, $el23);
+	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{LOG}}, ($vl3, $vl7, $vl23);
+	push @{$entries{$gene}{$goto}{TMAX}{$sample}{PVAL}}, $max;
+	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[0]."\_".$samples[2]}}, ($mp3, $mp7, $mp23);
+	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[1]."\_".$samples[2]}}, ($ep3, $ep7, $ep23);
+	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[1]."\_".$samples[2]}}, ($vp3, $vp7, $vp23);
     }
     return (\%entries);
 }
