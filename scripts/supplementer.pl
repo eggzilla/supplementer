@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 22:26:44 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 22:52:51 fall> by joerg
 
 ###############
 ###Use stuff
@@ -212,6 +212,7 @@ sub make_supplements{
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
+	    my $peaks = join(",",@maxy);
             foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
                 my $goi_link = goi_link($current_syn,$gois{$gene}{$from}{ID});
                 $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc);
@@ -221,6 +222,7 @@ sub make_supplements{
 		name		  => $gois{$gene}{$from}{NAME},
 		synonyms	  => $syn,
 		goiid		  => $gois{$gene}{$from}{ID},
+		maxy              => $peaks,
 		textxt		  => $tex_link,
 		igv		  => $igv,
 		sashimi		  => $sashimi,
