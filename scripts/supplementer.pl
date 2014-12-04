@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 00:03:40 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 00:22:56 fall> by joerg
 
 ###############
 ###Use stuff
@@ -143,7 +143,8 @@ print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 		foreach my $condition (keys %{$gois{$gene}{$from}{CUFFLINKS}{$sample}} ){
 #		print STDERR "$sample\t$condition\t$from\t$gene\n";
 		    my $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition});
-		    my $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition}); ## get rid of empty entries
+		    my $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    push @deg, $cufflinks;
 		    push @max, $maxy;
 		    push @condi, $condition;
@@ -164,6 +165,7 @@ print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 		    push @ccondi, $condition;
 		}
 		foreach my $condition (keys %{$gois{$gene}{$from}{CPEAKS}{$sample}} ){
+		    @{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}} = grep /\S/,@{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{CPEAKS}{$sample}{$condition});
 		    my $maxy = join(",",@{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CPEAKS}{$sample}{$condition});
 		    push @cmax, $maxy;
 		}
@@ -177,6 +179,7 @@ print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 		foreach my $condition (keys %{$gois{$gene}{$from}{MEV}{$sample}} ){
 #		print STDERR $condition,"\n";
 		    my $cufflinks = join(",",@{$gois{$gene}{$from}{MEV}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{MEV}{$sample}{$condition});
+		    @{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{CPEAKS}{$sample}{$condition});
 		    my $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    my $fold_change = join(",",@{$gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{LOG});
 		    push @tdeg, $cufflinks;
