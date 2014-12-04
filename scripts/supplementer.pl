@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-03 23:48:53 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 11:59:33 fall> by joerg
 
 ###############
 ###Use stuff
@@ -88,7 +88,7 @@ foreach my $file (@csvs){
     elsif($file =~ /timepoints/i){
 	%genes = %{parse_time($file,\%genes)};
     }
-    elsif($file =~ /hg19/i && $file =! /rae/i){
+    elsif($file =~ /hg19/i && $file =~ /rae/i){
 	%genes = %{parse_comparison($file,\%genes)};
     }
     chdir ($wdir);
@@ -279,11 +279,11 @@ sub make_supplements{
 		tcufflinkst	  => $tdeg[6],
 ##sample 3 condition2
 		tcondttwo	  => $tcondi[7],
-		tmaxyo_two	  => $tmaxy[7],
+		tmaxyt_two	  => $tmaxy[7],
 		tcufflinkst_two	  => $tdeg[7],		
 ##sample 3 condition3
 		tcondtthree	  => $tcondi[8],
-		tmaxyo_three	  => $tmaxy[8],
+		tmaxyt_three	  => $tmaxy[8],
 		tcufflinkst_three => $tdeg[8]
 	    };
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
