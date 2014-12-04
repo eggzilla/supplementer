@@ -212,7 +212,8 @@ sub make_supplements{
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
-            $index_entries .= index_entry_detailed($template_path,$gois{$gene}{$from}{NAME},$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc);
+            my $goi_link = goi_link($gois{$gene}{$from}{NAME},$gois{$gene}{$from}{ID});
+            $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc);
 	    my $goi_vars = 
 	    {   
 		name		  => $gois{$gene}{$from}{NAME},
@@ -830,16 +831,12 @@ sub unique_array{
     return(\@arrayuid);
 }
 
-sub index_entry{
-    my $glist = shift;
-    my %genelist = %{$glist};
-    my $index_entry;
-    foreach my $synonym (sort keys %genelist){
-	my $goi = $genelist{$synonym};
-	my $goilink = "$goi\.html";
-	$index_entry .= "<tr><td><a href=\"$goilink\">$synonym</a></td></tr>";
-    }
-    return $index_entry;
+sub goi_link{
+    my $synonym = shift;
+    my $goi = shift;
+    my $goilink = $goi.".html";
+    my $goi_link_html = "<a href=\"$goilink\">$synonym</a>";
+    return $goi_link_html;
 }
 sub index_entry_detailed{
     my $template_path = shift;
