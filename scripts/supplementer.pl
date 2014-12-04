@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 23:13:17 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 23:56:42 fall> by joerg
 
 ###############
 ###Use stuff
@@ -134,6 +134,7 @@ sub make_supplements{
 	    my $name = $gene;
 	    $genelist{$name}=$goi;
 ### Parse Expression
+print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 	    my (@samp, @condi, @deg, @max, @fold) = ();
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
 		my $fold_change = join(",",@{$gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG});
@@ -213,10 +214,10 @@ sub make_supplements{
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
 	    my $peaks = join(",",@max);
-            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
-                my $goi_link = goi_link($current_syn,$gois{$gene}{$from}{ID});
-                $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc);
-            }
+#            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
+	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
+	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peaks);
+#	}
 	    my $goi_vars = 
 	    {   
 		name		  => $gois{$gene}{$from}{NAME},
@@ -404,7 +405,6 @@ sub make_supplements{
 		defoldt_three	  => $defold[8]
 	    };
 
-
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
     }
@@ -413,9 +413,9 @@ sub make_supplements{
     my $index_file = 'index.html';
     #my $index_entries = index_entry(\%genelist);
     my $index_vars = 
-	{
-	    genesofinterests => $index_entries
-	};
+    {
+	genesofinterests => $index_entries
+    };
     $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
     chdir($wdir) or die "$!";
 }
@@ -449,8 +449,8 @@ sub parse_expression{
 	else{
 	    $goto = "EXPRESSION";
 	}
-	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'EXPRESSION');
-	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'EXPRESSION');
+	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'EXPRESSION' && $gene ne '');
+	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'EXPRESSION' && $gene ne '');
 	push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{$samples[1]}}, ($mb3, $mb7, $mb23);
 	push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{$samples[2]}}, ($eb3, $eb7, $eb23);
 	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
@@ -486,8 +486,8 @@ sub parse_comparison{
 	else{
 	    $goto = "COMPARISON";
 	}
-	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'COMPARISON');
-	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'COMPARISON');
+	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'COMPARISON' && $gene ne '');
+	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'COMPARISON' && $gene ne '');
 	push @{$entries{$gene}{$goto}{HB}{$sample}{$samples[0]."\_".$samples[2]}}, ($hg3, $hg7, $hg23);
 	push @{$entries{$gene}{$goto}{HB}{$sample}{$samples[1]."\_".$samples[2]}}, ($rae3, $rae7, $rae23);
 	push @{$entries{$gene}{$goto}{CLOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
@@ -522,8 +522,8 @@ sub parse_timepoints{
 	else{
 	    $goto = "TIMEPOINTS";
 	}
-	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'TIMEPOINTS');
-	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'TIMEPOINTS');
+	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'TIMEPOINTS' && $gene ne '');
+	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'TIMEPOINTS' && $gene ne '');
 	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($mb3, $mb7, $mb23);
 	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($eb3, $eb7, $eb23);
 	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($mv3, $mv7, $mv23);
@@ -565,8 +565,8 @@ sub parse_deseq{
 	else{
 	    $goto = "DESEQ";
 	}
-	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ');
-	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'DESEQ');
+	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ' && $gene ne '');
+	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	my $sampled;
 	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock} || !defined @{$entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}}[0]){
 	    $sampled = 'hg19_mock_ebov';
@@ -633,7 +633,8 @@ sub read_tables{
 		}
 		split(/[,]+|[\s]{2,}|\t/,$fields[4])
 		) if ($fields[4] ne '');
-	    push @synonyms, $gene unless ($gene =~ /.goi./);
+	    push @synonyms, $gene unless ($gene =~ /.goi./ || $gene eq '');
+	    @synonyms = grep /\S/, @synonyms; ## get rid of empty entries
 	    if ($duplicate eq '' || $duplicate == 0 || ($duplicate && $fields[8] ne '')){
 		my @pathways =	(
 		    map {   
@@ -760,7 +761,8 @@ sub read_tables{
 		}
 		split(/[,]+|[\s]{2,}|\t/,$fields[4])
 		) if ($fields[4] ne '');
-	    push @synonyms, $gene unless ($gene =~ /.apg./);
+	    push @synonyms, $gene unless ($gene =~ /.apg./ || $gene eq '');
+	    @synonyms = grep /\S/, @synonyms; ## get rid of empty entries
 	    if ($duplicate eq '' || $duplicate == 0){
 		my @pathways =	(
 		    map {   
@@ -898,6 +900,7 @@ sub index_entry_detailed{
     my $igv = shift;
     my $sashimi = shift;
     my $ucsc = shift;
+    my $maxy = shift;
     my $index_entry;
     my $template = Template->new({
 	INCLUDE_PATH => ["$template_path"],
@@ -906,13 +909,14 @@ sub index_entry_detailed{
     my $entry_file = "indexentry.html";
     my $entry_vars = 
     {   
-        name		  => $name,
-        synonyms	  => $synonyms,
-        goiid		  => $goiid,
-        textxt		  => $textxt,
-        igv		  => $igv,
-        sashimi		  => $sashimi,
-        ucsc		  => $ucsc
+        name	 => $name,
+        synonyms => $synonyms,
+        goiid	 => $goiid,
+	maxy     => $maxy,
+        textxt	 => $textxt,
+        igv	 => $igv,
+        sashimi	 => $sashimi,
+        ucsc	 => $ucsc
     };
     $template->process($entry_file,$entry_vars,\$index_entry) || die "Template process failed: ", $template->error(), "\n";
     return $index_entry;
