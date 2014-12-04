@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 22:06:56 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 22:26:44 fall> by joerg
 
 ###############
 ###Use stuff
@@ -592,7 +592,7 @@ sub read_tables{
 		}
 		split(/[,]+|[\s]{2,}|\t/,$fields[4])
 		) if ($fields[4] ne '');
-	    push @synonyms, $gene;
+	    push @synonyms, $gene unless ($gene =~ /.goi./);
 	    if ($duplicate eq '' || $duplicate == 0 || ($duplicate && $fields[8] ne '')){
 		my @pathways =	(
 		    map {   
@@ -719,7 +719,7 @@ sub read_tables{
 		}
 		split(/[,]+|[\s]{2,}|\t/,$fields[4])
 		) if ($fields[4] ne '');
-	    push @synonyms, $gene;
+	    push @synonyms, $gene unless ($gene =~ /.apg./);
 	    if ($duplicate eq '' || $duplicate == 0){
 		my @pathways =	(
 		    map {   
