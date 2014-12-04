@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 21:48:55 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 22:06:56 fall> by joerg
 
 ###############
 ###Use stuff
@@ -585,17 +585,17 @@ sub read_tables{
 	    my @synonyms	  = (
 		map {   
 		    s/^\s+//;  # strip leading spaces
-#                s/\s+$//;  # strip trailing spaces
+		    s/\s+$//;  # strip trailing spaces
 		    $_         # return the modified string
 		}
 		split(/[,]+|[\s]{2,}|\t/,$fields[4])
 		) if ($fields[4] ne '');
-	    push @synonyms, $gene unless ($synonyms[0] || $gene eq '');
+	    push @synonyms, $gene;
 	    if ($duplicate eq '' || $duplicate == 0 || ($duplicate && $fields[8] ne '')){
 		my @pathways =	(
 		    map {   
 			s/^\s+//;  # strip leading spaces
-#                s/\s+$//;  # strip trailing spaces
+			s/\s+$//;  # strip trailing spaces
 			$_         # return the modified string
 		    }
 		    split(/[,]+|[\s]{2,}|\t/,$fields[5])
@@ -604,7 +604,7 @@ sub read_tables{
 		my @literature =	(
 		    map {   
 			s/^\s+//;  # strip leading spaces
-#                s/\s+$//;  # strip trailing spaces
+			s/\s+$//;  # strip trailing spaces
 			$_         # return the modified string
 		    }
 		    split(/[,]+|[\s]{2,}|\t/,$fields[6])
@@ -639,8 +639,10 @@ sub read_tables{
 		push @{$entries{$gene}{GOI}{SYNONYMS}}, @synonyms;
 		push @{$entries{$gene}{GOI}{PATHWAY}}, @pathways;
 		push @{$entries{$gene}{GOI}{LITERATURE}}, @literature;   
-		$entries{$gene}{GOI}{NAME} =	$gene || $goi;
-		$entries{$gene}{GOI}{TEX}  =	"$goi\/$goi\.tex";
+		my $name = $gene;
+		$name = $synonyms[0] if ($name =~ /.goi./ && defined $synonyms[0]);
+		$entries{$gene}{GOI}{NAME} = $name;
+		$entries{$gene}{GOI}{TEX}  = "$goi\/$goi\.tex";
 		if ($igvs == 1){
 		    push @{$entries{$gene}{GOI}{IGV}},"$goi\/snapshots/$goi\_igv.svg";
 		}
@@ -710,17 +712,17 @@ sub read_tables{
 	    my @synonyms	  = (
 		map {   
 		    s/^\s+//;  # strip leading spaces
-#                s/\s+$//;  # strip trailing spaces
+		    s/\s+$//;  # strip trailing spaces
 		    $_         # return the modified string
 		}
 		split(/[,]+|[\s]{2,}|\t/,$fields[4])
 		) if ($fields[4] ne '');
-	    push @synonyms, $gene unless ($synonyms[0] || $gene eq '');
+	    push @synonyms, $gene;
 	    if ($duplicate eq '' || $duplicate == 0){
 		my @pathways =	(
 		    map {   
 			s/^\s+//;  # strip leading spaces
-#                s/\s+$//;  # strip trailing spaces
+			s/\s+$//;  # strip trailing spaces
 			$_         # return the modified string
 		    }
 		    split(/[,]+|[\s]{2,}|\t/,$fields[5])
@@ -729,7 +731,7 @@ sub read_tables{
 		my @literature =	(
 		    map {   
 			s/^\s+//;  # strip leading spaces
-#                s/\s+$//;  # strip trailing spaces
+			s/\s+$//;  # strip trailing spaces
 			$_         # return the modified string
 		    }
 		    split(/[,]+|[\s]{2,}|\t/,$fields[6])
@@ -765,7 +767,9 @@ sub read_tables{
 		push @{$entries{$gene}{APG}{SYNONYMS}},  @synonyms;
 		push @{$entries{$gene}{APG}{PATHWAY}}, @pathways;
 		push @{$entries{$gene}{APG}{LITERATURE}}, @literature;   
-		$entries{$gene}{APG}{NAME} =	$gene || $apg;
+		my $name = $gene;
+		$name = $synonyms[0] if ($name =~ /.apg./ && defined $synonyms[0]);
+		$entries{$gene}{APG}{NAME} =	$name;
 		$entries{$gene}{APG}{TEX}  =	"$apg\/$apg\.tex";
 		if ($igvs == 1){
 		    push @{$entries{$gene}{APG}{IGV}},"$apg\/snapshots/$apg\_igv.svg";
