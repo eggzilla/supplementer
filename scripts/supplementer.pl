@@ -122,7 +122,7 @@ sub make_supplements{
     my %genelist;
     my @parseit = ('GOI', 'APG', 'EXPRESSION', 'TIMEPOINTS' , 'COMPARISON', 'DESEQ');
 #    my @sorted_genes = 	map { $_->[0] } sort { $a->[1] cmp $b->[1] } map { [ $_, uc($_) ] } keys %gois;
-    my $indexentries=;
+    my $index_entries;
     foreach my $gene( sort {lc($a) cmp lc($b)} keys %gois ){
 #    foreach my $gene( @sorted_genes ){
 	foreach my $from (@parseit){
