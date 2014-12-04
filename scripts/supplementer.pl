@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 23:56:42 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 00:03:40 fall> by joerg
 
 ###############
 ###Use stuff
@@ -893,18 +893,18 @@ sub goi_link{
 }
 sub index_entry_detailed{
     my $template_path = shift;
-    my $name = shift;
-    my $synonyms = shift;
-    my $goiid = shift;
-    my $textxt = shift;
-    my $igv = shift;
-    my $sashimi = shift;
-    my $ucsc = shift;
-    my $maxy = shift;
+    my $name	      = shift;
+    my $synonyms      = shift;
+    my $goiid	      = shift;
+    my $textxt	      = shift;
+    my $igv	      = shift;
+    my $sashimi	      = shift;
+    my $ucsc	      = shift;
+    my $maxy	      = shift;
     my $index_entry;
-    my $template = Template->new({
+    my $template     =	Template->new({
 	INCLUDE_PATH => ["$template_path"],
-	RELATIVE=>0
+	RELATIVE     =>	0
                                  });
     my $entry_file = "indexentry.html";
     my $entry_vars = 
