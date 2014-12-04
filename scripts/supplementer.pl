@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 21:37:42 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 21:48:55 fall> by joerg
 
 ###############
 ###Use stuff
@@ -399,10 +399,10 @@ sub parse_expression{
 	my $line  = $_;
 	my ($gene, $mb3, $mb7, $mb23, $eb3, $eb7, $eb23, $l3, $l7, $l23, $max, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23) = split(/\t/,$line);
 	my $goto;
-	if (defined $entries{$gene}{GOI}){
+	if (defined $entries{$gene}{GOI}{ID}){
 	    $goto = "GOI";
 	}
-	elsif(defined $entries{$gene}{APG}){
+	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
 	else{
@@ -436,10 +436,10 @@ sub parse_comparison{
 	my $line  = $_;
 	my ($gene, $hg3, $hg7, $hg23, $rae3, $rae7, $rae23, $l3, $l7, $l23, $max, $hgp3, $hgp7, $hgp23, $raep3, $raep7, $raep23) = split(/\t/,$line);
 	my $goto;
-	if (defined $entries{$gene}{GOI}){
+	if (defined $entries{$gene}{GOI}{ID}){
 	    $goto = "GOI";
 	}
-	elsif(defined $entries{$gene}{APG}){
+	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
 	else{
@@ -472,10 +472,10 @@ sub parse_timepoints{
 	my $line  = $_;
 	my ($gene, $mb3, $mb7, $mb23, $eb3, $eb7, $eb23, $mv3, $mv7, $mv23, $ml3, $ml7, $ml23, $el3, $el7, $el23, $vl3, $vl7, $vl23, $max, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23, $vp3, $vp7, $vp23) = split(/\t/,$line);
 	my $goto;
-	if (defined $entries{$gene}{GOI}){
+	if (defined $entries{$gene}{GOI}{ID}){
 	    $goto = "GOI";
 	}
-	elsif(defined $entries{$gene}{APG}){
+	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
 	else{
