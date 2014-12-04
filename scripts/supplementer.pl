@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 00:22:56 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 00:44:21 fall> by joerg
 
 ###############
 ###Use stuff
@@ -216,7 +216,9 @@ print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
-	    my $peaks = join(",",@max);
+	    @max = unique_array(\@max);
+	    my $peaks = 'NA';
+	    $peaks = join(",",@max) if (@max);
 #            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
 	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peaks);
@@ -459,7 +461,9 @@ sub parse_expression{
 	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
 	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
+	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}} = unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}});
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
+	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}} = unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}});
     }
     return (\%entries);
 }
@@ -623,7 +627,8 @@ sub read_tables{
 	    my $goi		  = $fields[0];
 	    my $hacker		  = $fields[1];
 	    next if ($hacker eq 'OPTIONAL' || $hacker eq '');
-	    my $gene		  = $fields[2] || $goi;
+	    (my $gene		  = $fields[2]) =~ s/^\s+//g;
+	    $gene = $goi unless $gene;;
 	    next if (defined $entries{$gene}{GOI}{ID});
 
 	    my $duplicate	  = $fields[3];   
@@ -752,7 +757,8 @@ sub read_tables{
 	    my $apg		  = $fields[0];
 	    my $hacker		  = $fields[1];
 	    next if ($hacker eq 'OPTIONAL' || $hacker eq '');
-	    my $gene		  = $fields[2] =~ s/^\s+//g || $apg; 
+	    (my $gene		  = $fields[2]) =~ s/^\s+//g;
+	    $gene = $apg unless ($gene);
 	    next if (defined $entries{$gene}{APG}{ID});
 
 	    my $duplicate	  = $fields[3];   
