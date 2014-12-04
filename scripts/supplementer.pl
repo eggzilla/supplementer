@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 00:44:21 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 00:46:10 fall> by joerg
 
 ###############
 ###Use stuff
@@ -216,7 +216,7 @@ print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
-	    @max = unique_array(\@max);
+	    @max = @{unique_array(\@max)};
 	    my $peaks = 'NA';
 	    $peaks = join(",",@max) if (@max);
 #            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
@@ -461,9 +461,9 @@ sub parse_expression{
 	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
 	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
-	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}} = unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}});
+	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}} = @{unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}})};
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
-	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}} = unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}});
+	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}} = @{unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}})};
     }
     return (\%entries);
 }
