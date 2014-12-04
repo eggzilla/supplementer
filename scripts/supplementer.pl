@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 22:52:51 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 23:13:17 fall> by joerg
 
 ###############
 ###Use stuff
@@ -212,7 +212,7 @@ sub make_supplements{
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
-	    my $peaks = join(",",@maxy);
+	    my $peaks = join(",",@max);
             foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
                 my $goi_link = goi_link($current_syn,$gois{$gene}{$from}{ID});
                 $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc);
@@ -222,42 +222,48 @@ sub make_supplements{
 		name		  => $gois{$gene}{$from}{NAME},
 		synonyms	  => $syn,
 		goiid		  => $gois{$gene}{$from}{ID},
-		maxy              => $peaks,
+		maxy		  => $peaks,
 		textxt		  => $tex_link,
 		igv		  => $igv,
 		sashimi		  => $sashimi,
 		ucsc		  => $ucsc,
-		additionalplots	  => $gois{$gene}{$from}{EXTRA},
+		additionalplots   => $gois{$gene}{$from}{EXTRA},
 ##sample1
 		sample		  => $samp[0],
 ##sample 1 condition1
 		condone		  => $condi[0],
 		maxy		  => $max[0],
 		cufflinks	  => $deg[0],
+		fold		  => $fold[0],
 ##sample1 condition2
 		condtwo		  => $condi[1],
- 		maxy_two	  => $max[1],
-		cufflinks_two	  => $deg[1],
+		maxy_two	  => $max[1],
+		cufflinks_two     => $deg[1],
+		fold		  => $fold[1],
 ##sample2
 		sampleone	  => $samp[1],
 ##sample 2 condition1
 		condoone	  => $condi[2],
 		maxyo		  => $max[2],
 		cufflinkso	  => $deg[2],
+		foldo		  => $fold[2],
 ##sample 2 condition2
 		condotwo	  => $condi[3],
 		maxyo_two	  => $max[3],
-		cufflinkso_two	  => $deg[3],
+		cufflinkso_two    => $deg[3],
+		foldo_two         => $fold[3],
 ##sample 3
 		sampletwo	  => $samp[2],
 ##sample 3 condition1
 		condtone	  => $condi[4],
 		maxyt		  => $max[4],
 		cufflinkst	  => $deg[4],
+		foldt		  => $fold[4],    
 ##sample 3 condition2
 		condttwo	  => $condi[5],
 		maxyo_two	  => $max[5],
-		cufflinkst_two	  => $deg[5],
+		cufflinkst_two    => $deg[5],
+		foldt_two         => $fold[5],
 ###Comparison
 ##sample1
 		csample		  => $csamp[0],
@@ -265,20 +271,24 @@ sub make_supplements{
 		ccondone	  => $ccondi[0],
 		cmaxy		  => $cmax[0],
 		ccufflinks	  => $cdeg[0],
+		cfold             => $cfold[0],
 ##sample1 condition2
 		ccondtwo	  => $ccondi[1],
- 		cmaxy_two	  => $cmax[1],
-		ccufflinks_two	  => $cdeg[1],
+		cmaxy_two	  => $cmax[1],
+		ccufflinks_two    => $cdeg[1],
+		cfold_two         => $cfold[1],
 ##sample2
 		csampleone	  => $csamp[1],
 ##sample 2 condition1
 		ccondoone	  => $ccondi[2],
 		cmaxyo		  => $cmax[2],
 		ccufflinkso	  => $cdeg[2],
+		cfoldo            => $cfold[2],
 ##sample 2 condition2
 		ccondotwo	  => $ccondi[3],
 		cmaxyo_two	  => $cmax[3],
-		ccufflinkso_two	  => $cdeg[3],
+		ccufflinkso_two   => $cdeg[3],
+		cfoldo_two        => $cfold[3],
 ### Timepoints
 ##sample1
 		tsample		  => $tsamp[0],
@@ -286,42 +296,51 @@ sub make_supplements{
 		tcondone	  => $tcondi[0],
 		tmaxy		  => $tmax[0],
 		tcufflinks	  => $tdeg[0],
+		tfold             => $tfold[0],
 ##sample1 condition2
 		tcondtwo	  => $tcondi[1],
- 		tmaxy_two	  => $tmax[1],
-		tcufflinks_two	  => $tdeg[1],
+		tmaxy_two	  => $tmax[1],
+		tcufflinks_two    => $tdeg[1],
+		tfold_two         => $tfold[1],
 ##sample1 condition3
 		tcondthree	  => $tcondi[2],
- 		tmaxy_three	  => $tmax[2],
+		tmaxy_three	  => $tmax[2],
 		tcufflinks_three  => $tdeg[2],
+		tfold_three       => $tfold[2],
 ##sample2
 		tsampleone	  => $tsamp[1],
 ##sample 2 condition1
 		tcondoone	  => $tcondi[3],
 		tmaxyo		  => $tmax[3],
 		tcufflinkso	  => $tdeg[3],
+		tfoldo            => $tfold[3],
 ##sample 2 condition2
 		tcondotwo	  => $tcondi[4],
 		tmaxyo_two	  => $tmax[4],
-		tcufflinkso_two	  => $tdeg[4],
+		tcufflinkso_two   => $tdeg[4],
+		tfoldo_two        => $tfold[4],
 ##sample 2 condition3
 		tcondthree	  => $tcondi[5],
-		tmaxyo_three	  => $tmax[5],
+		tmaxyo_three      => $tmax[5],
 		tcufflinkso_three => $tdeg[5],
+		tfoldo_three      => $tfold[5],
 ##sample 3
 		tsampletwo	  => $tsamp[2],
 ##sample 3 condition1
 		tcondtone	  => $tcondi[6],
 		tmaxyt		  => $tmax[6],
 		tcufflinkst	  => $tdeg[6],
+		tfoldt            => $tfold[6],
 ##sample 3 condition2
 		tcondttwo	  => $tcondi[7],
 		tmaxyt_two	  => $tmax[7],
-		tcufflinkst_two	  => $tdeg[7],		
+		tcufflinkst_two   => $tdeg[7],        
+		tfoldt_two        => $tfold[7],
 ##sample 3 condition3
 		tcondtthree	  => $tcondi[8],
-		tmaxyt_three	  => $tmax[8],
+		tmaxyt_three      => $tmax[8],
 		tcufflinkst_three => $tdeg[8],
+		tfoldt_three      => $tfold[8],
 ### DESeq
 ##sample1
 		dsample		  => $dsamp[0],
@@ -329,43 +348,63 @@ sub make_supplements{
 		dcondone	  => $dcondi[0],
 		dmaxy		  => $dmax[0],
 		dcufflinks	  => $ddeg[0],
+		dfold             => $dfold[0],
+		defold            => $defold[0],
 ##sample1 condition2
-		dconddwo	  => $dcondi[1],
- 		dmaxy_dwo	  => $dmax[1],
-		dcufflinks_dwo	  => $ddeg[1],
+		dcondtwo	  => $dcondi[1],
+		dmaxy_two	  => $dmax[1],
+		dcufflinks_two    => $ddeg[1],
+		dfold_two         => $dfold[1],
+		defold_two        => $defold[1],
 ##sample1 condition3
-		dconddhree	  => $dcondi[2],
- 		dmaxy_dhree	  => $dmax[2],
-		dcufflinks_dhree  => $ddeg[2],
+		dcondthree	  => $dcondi[2],
+		dmaxy_three	  => $dmax[2],
+		dcufflinks_three  => $ddeg[2],
+		dfold_three       => $dfold[2],
+		defold_three      => $defold[2],
 ##sample2
 		dsampleone	  => $dsamp[1],
 ##sample 2 condition1
 		dcondoone	  => $dcondi[3],
 		dmaxyo		  => $dmax[3],
 		dcufflinkso	  => $ddeg[3],
+		dfoldo            => $dfold[3],
+		defoldo           => $defold[3],
 ##sample 2 condition2
-		dcondodwo	  => $dcondi[4],
-		dmaxyo_dwo	  => $dmax[4],
-		dcufflinkso_dwo	  => $ddeg[4],
+		dcondotwo	  => $dcondi[4],
+		dmaxyo_two	  => $dmax[4],
+		dcufflinkso_two   => $ddeg[4],
+		dfoldo_two        => $dfold[4],
+		defoldo_two       => $defold[4],
 ##sample 2 condition3
-		dconddhree	  => $dcondi[5],
-		dmaxyo_dhree	  => $dmax[5],
-		dcufflinkso_dhree => $ddeg[5],
+		dcondothree	  => $dcondi[5],
+		dmaxyo_three      => $dmax[5],
+		dcufflinkso_three => $ddeg[5],
+		dfoldo_three      => $dfold[5],
+		defoldo_three     => $defold[5],
 ##sample 3
-		dsampledwo	  => $dsamp[2],
+		dsampletwo	  => $dsamp[2],
 ##sample 3 condition1
-		dconddone	  => $dcondi[6],
-		dmaxyd		  => $dmax[6],
-		dcufflinksd	  => $ddeg[6],
+		dcondtone	  => $dcondi[6],
+		dmaxyt		  => $dmax[6],
+		dcufflinkst	  => $ddeg[6],
+		dfoldt            => $dfold[6],
+		defolt            => $defold[6],
 ##sample 3 condition2
-		dcondddwo	  => $dcondi[7],
-		dmaxyd_dwo	  => $dmax[7],
-		dcufflinksd_dwo	  => $ddeg[7],		
+		dcondttwo	  => $dcondi[7],
+		dmaxyt_dwo	  => $dmax[7],
+		dcufflinkst_dwo   => $ddeg[7],        
+		dfoldt_two        => $dfold[7],
+		defoldt_two       => $defold[7],
 ##sample 3 condition3
-		dcondddhree	  => $dcondi[8],
-		dmaxyd_dhree	  => $dmax[8],
-		dcufflinksd_dhree => $ddeg[8]
+		dcondtthree	  => $dcondi[8],
+		dmaxyt_three      => $dmax[8],
+		dcufflinkst_three => $ddeg[8],
+		dfoldt_three	  => $dfold[8],
+		defoldt_three	  => $defold[8]
 	    };
+
+
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
     }
