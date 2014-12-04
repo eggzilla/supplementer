@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 15:18:44 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 21:37:42 fall> by joerg
 
 ###############
 ###Use stuff
@@ -407,6 +407,7 @@ sub parse_expression{
 	    $goto = "EXPRESSION";
 	}
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'EXPRESSION');
+	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'EXPRESSION');
 	push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{$samples[1]}}, ($mb3, $mb7, $mb23);
 	push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{$samples[2]}}, ($eb3, $eb7, $eb23);
 	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
@@ -443,6 +444,7 @@ sub parse_comparison{
 	    $goto = "COMPARISON";
 	}
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'COMPARISON');
+	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'COMPARISON');
 	push @{$entries{$gene}{$goto}{HB}{$sample}{$samples[0]."\_".$samples[2]}}, ($hg3, $hg7, $hg23);
 	push @{$entries{$gene}{$goto}{HB}{$sample}{$samples[1]."\_".$samples[2]}}, ($rae3, $rae7, $rae23);
 	push @{$entries{$gene}{$goto}{CLOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
@@ -478,6 +480,7 @@ sub parse_timepoints{
 	    $goto = "TIMEPOINTS";
 	}
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'TIMEPOINTS');
+	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'TIMEPOINTS');
 	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($mb3, $mb7, $mb23);
 	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($eb3, $eb7, $eb23);
 	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($mv3, $mv7, $mv23);
@@ -520,6 +523,7 @@ sub parse_deseq{
 	    $goto = "DESEQ";
 	}
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ');
+	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'DESEQ');
 	my $sampled;
 	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock} || !defined @{$entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}}[0]){
 	    $sampled = 'hg19_mock_ebov';
