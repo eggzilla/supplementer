@@ -212,8 +212,10 @@ sub make_supplements{
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
-            my $goi_link = goi_link($gois{$gene}{$from}{NAME},$gois{$gene}{$from}{ID});
-            $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc);
+            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
+                my $goi_link = goi_link($current_syn,$gois{$gene}{$from}{ID});
+                $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc);
+            }
 	    my $goi_vars = 
 	    {   
 		name		  => $gois{$gene}{$from}{NAME},
