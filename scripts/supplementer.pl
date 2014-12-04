@@ -715,7 +715,34 @@ sub index_entry{
     }
     return $index_entry;
 }
-
+sub index_entry_detailed{
+    my $templatePath = shift;
+    my $name = shift;
+    my $synonyms = shift;
+    my $goiid = shift;
+    my $textxt = shift;
+    my $igv = shift;
+    my $sashimi = shift;
+    my $ucsc = shift;
+    my $index_entry;
+    my $template = Template->new({
+	INCLUDE_PATH => ["$template_path"],
+	RELATIVE=>0
+                                 });
+    my $entry_file = "indexentry.html";
+    my $entry_vars = 
+    {   
+        name		  => $name,
+        synonyms	  => $synonyms,
+        goiid		  => $goiid,
+        textxt		  => $textxt,
+        igv		  => $igv,
+        sashimi		  => $sashimi,
+        ucsc		  => $ucsc
+    };
+    $template->process($entry_file,$entry_vars,$index_entry) || die "Template process failed: ", $template->error(), "\n";
+    return $index_entry;
+}
 sub image_entry{
     my $file = shift;
     my $dir = shift;
