@@ -866,7 +866,7 @@ sub index_entry_detailed{
         sashimi		  => $sashimi,
         ucsc		  => $ucsc
     };
-    $template->process($entry_file,$entry_vars,$index_entry) || die "Template process failed: ", $template->error(), "\n";
+    $template->process($entry_file,$entry_vars,\$index_entry) || die "Template process failed: ", $template->error(), "\n";
     return $index_entry;
 }
 sub image_entry{
