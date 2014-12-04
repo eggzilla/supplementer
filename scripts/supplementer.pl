@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 13:28:24 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 14:56:17 fall> by joerg
 
 ###############
 ###Use stuff
@@ -91,6 +91,9 @@ foreach my $file (@csvs){
     elsif($file =~ /hg19/i && $file =~ /rae/i){
 	%genes = %{parse_comparison($file,\%genes)};
     }
+    elsif($file =~ /deseq/i){
+	%genes = %{parse_deseq($file,\%genes)};
+    }
     chdir ($wdir);
 }
 
@@ -99,7 +102,7 @@ make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-#    print Dumper(\%gois);
+    print Dumper(\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
@@ -117,7 +120,7 @@ sub make_supplements{
     
     #create html directory structure
     my %genelist;
-    my @parseit = ('GOI', 'APG', 'EXPRESSION', 'TIMEPOINTS' , 'COMPARISON');
+    my @parseit = ('GOI', 'APG', 'EXPRESSION', 'TIMEPOINTS' , 'COMPARISON', 'DESEQ');
 #    my @sorted_genes = 	map { $_->[0] } sort { $a->[1] cmp $b->[1] } map { [ $_, uc($_) ] } keys %gois;
     foreach my $gene( sort {lc($a) cmp lc($b)} keys %gois ){
 #    foreach my $gene( @sorted_genes ){
@@ -178,6 +181,21 @@ sub make_supplements{
 		    push @tmax, $maxy;
 		    push @tfold, $fold_change;
 		    push @tcondi, $condition;
+		}
+	    }
+
+### Parse DESeq
+	    my (@dsamp, @dcondi, @ddeg, @dmax, @dfold) = ();
+	    foreach my $sample (keys %{$gois{$gene}{$from}{DLOGEXPRESSION}} ){
+		push @dsamp, $sample;
+		foreach my $condition (keys %{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}} ){
+		    my $cufflinks = join(",",@{$gois{$gene}{$from}{DE}{$sample}{$condition}}) if ($from eq 'DESeq' && defined $gois{$gene}{$from}{DE}{$sample}{$condition});
+#		    my $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    my $fold_change = join(",",@{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition});
+		    push @ddeg, $cufflinks;
+#		    push @tmax, $maxy;
+		    push @dfold, $fold_change;
+		    push @dcondi, $condition;
 		}
 	    }
 	    
@@ -294,7 +312,50 @@ sub make_supplements{
 ##sample 3 condition3
 		tcondtthree	  => $tcondi[8],
 		tmaxyt_three	  => $tmax[8],
-		tcufflinkst_three => $tdeg[8]
+		tcufflinkst_three => $tdeg[8],
+### DESeq
+##sample1
+		dsample		  => $dsamp[0],
+##sample 1 condition1
+		dcondone	  => $dcondi[0],
+		dmaxy		  => $dmax[0],
+		dcufflinks	  => $ddeg[0],
+##sample1 condition2
+		dconddwo	  => $dcondi[1],
+ 		dmaxy_dwo	  => $dmax[1],
+		dcufflinks_dwo	  => $ddeg[1],
+##sample1 condition3
+		dconddhree	  => $dcondi[2],
+ 		dmaxy_dhree	  => $dmax[2],
+		dcufflinks_dhree  => $ddeg[2],
+##sample2
+		dsampleone	  => $dsamp[1],
+##sample 2 condition1
+		dcondoone	  => $dcondi[3],
+		dmaxyo		  => $dmax[3],
+		dcufflinkso	  => $ddeg[3],
+##sample 2 condition2
+		dcondodwo	  => $dcondi[4],
+		dmaxyo_dwo	  => $dmax[4],
+		dcufflinkso_dwo	  => $ddeg[4],
+##sample 2 condition3
+		dconddhree	  => $dcondi[5],
+		dmaxyo_dhree	  => $dmax[5],
+		dcufflinkso_dhree => $ddeg[5],
+##sample 3
+		dsampledwo	  => $dsamp[2],
+##sample 3 condition1
+		dconddone	  => $dcondi[6],
+		dmaxyd		  => $dmax[6],
+		dcufflinksd	  => $ddeg[6],
+##sample 3 condition2
+		dcondddwo	  => $dcondi[7],
+		dmaxyd_dwo	  => $dmax[7],
+		dcufflinksd_dwo	  => $ddeg[7],		
+##sample 3 condition3
+		dcondddhree	  => $dcondi[8],
+		dmaxyd_dhree	  => $dmax[8],
+		dcufflinksd_dhree => $ddeg[8]
 	    };
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
@@ -425,6 +486,69 @@ sub parse_timepoints{
 	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[0]}}, ($vp3, $vp7, $vp23);
     }
     return (\%entries);
+}
+
+sub parse_deseq{
+##Gene   Mock_3h Mock_7h Mock_23h        EBOV_3h EBOV_7h EBOV_23h        MARV_3h MARV_7h MARV_23h        FC(Mock-3h_vs_Mock-7h)  FC(Mock-3h_vs_Mock-23h) FC(Mock-7h_vs_Mock-23h) FC(EBOV-3h_vs_EBOV-7h)  FC(EBOV-3h_vs_EBOV-23h) FC(EBOV-7h_vs_EBOV-23h) FC(MARV-3h_vs_MARV-7h)  FC(MARV-3h_vs_MARV-23h) FC(MARV-7h_vs_MARV-23h) 
+#FC(Mock-3h_vs_EBOV-3h)  FC(Mock-3h_vs_MARV-3h)  FC(EBOV-3h_vs_MARV-3h)  FC(Mock-7h_vs_EBOV-7h)  FC(Mock-7h_vs_MARV-7h)  FC(EBOV-7h_vs_MARV-7h)  FC(Mock-23h_vs_EBOV-23h)        FC(Mock-23h_vs_MARV-23h)        FC(EBOV-23h_vs_MARV-23h)        PADJ(Mock-3h_vs_Mock-7h)        PADJ(Mock-3h_vs_Mock-23h)       PADJ(Mock-7h_vs_Mock-23h)       PADJ(EBOV-3h_vs_EBOV-7h)        PADJ(EBOV-3h_vs_EBOV-23h)       PADJ(EBOV-7h_vs_EBOV-23h)       PADJ(MARV-3h_vs_MARV-7h)        PADJ(MARV-3h_vs_MARV-23h)       PADJ(MARV-7h_vs_MARV-23h)       PADJ(Mock-3h_vs_EBOV-3h)        PADJ(Mock-3h_vs_MARV-3h)        PADJ(EBOV-3h_vs_MARV-3h)        PADJ(Mock-7h_vs_EBOV-7h)        PADJ(Mock-7h_vs_MARV-7h)        PADJ(EBOV-7h_vs_MARV-7h)        PADJ(Mock-23h_vs_EBOV-23h)      PADJ(Mock-23h_vs_MARV-23h)      PADJ(EBOV-23h_vs_MARV-23h)
+
+    my $filetoparse = $_[0];
+    (my $sample = $filetoparse) =~ s/\.csv//;
+    my @samples = split(/\_/,$sample);
+    my %entries	    = %{$_[1]};
+    print STDERR "Timepoint parsing $sample!\n";
+    open (LIST,"<","$filetoparse");
+    while(<LIST>){
+	next if($_ =~ /^#/);
+	my $line  = $_;
+	my ( $gene, $mb3, $mb7, $mb23, $eb3, $eb7, $eb23, $vb3, $vb7, $vb23, 
+	     $ml37, $ml323, $ml723, $el37, $el323, $el723, $vl37, $vl323, $vl723,
+	     $me3, $mv3, $ev3, $me7, $mv7, $ev7, $me23, $mv23, $ev23 ) = split(/\t/,$line);
+	my $goto;
+	if (defined $entries{$gene}{GOI}){
+	    $goto = "GOI";
+	}
+	elsif(defined $entries{$gene}{APG}){
+	    $goto = "APG";
+	}
+	else{
+	    $goto = "DESEQ";
+	}
+	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ');
+	my $sampled;
+	if (defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}){
+	    $sampled = 'hg19_mock_ebov';
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{ebov}}, ($eb3, $eb7, $eb23);
+	    push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sampled}{LOG}}, ($l3, $l7, $l23);
+	}
+	if (defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock}){
+	    $sampled = 'hg19_mock_marv';
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{marv}}, ($vb3, $vb7, $vb23);
+	}
+	if (defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov}){
+	    $sampled = 'hg19_ebov_marv';
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{ebov}}, ($eb3, $eb7, $eb23);
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{marv}}, ($vb3, $vb7, $vb23);
+	}
+	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov} && !defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock} && !defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}){
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{mock}}, ($mb3, $mb7, $mb23);
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{ebov}}, ($eb3, $eb7, $eb23);
+	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{marv}}, ($vb3, $vb7, $vb23);
+	}
+	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{mock}}, ($ml37, $ml323, $ml723);
+	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{ebov}}, ($el37, $el323, $el723);
+	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{marv}}, ($vl37, $vl323, $vl723);
+	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{DE3}}, ($me3, $mv3, $ev3);
+	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{DE7}}, ($me7, $mv7, $ev7);
+	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{DE23}}, ($me23, $mv23, $ev23);
+#	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
+#	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
+#	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
+    }
+    return (\%entries);
+    }
 }
 
 sub read_tables{
