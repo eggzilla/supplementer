@@ -119,6 +119,7 @@ sub make_supplements{
     my %genelist;
     my @parseit = ('GOI', 'APG', 'EXPRESSION', 'TIMEPOINTS' , 'COMPARISON');
 #    my @sorted_genes = 	map { $_->[0] } sort { $a->[1] cmp $b->[1] } map { [ $_, uc($_) ] } keys %gois;
+    my $indexentries=;
     foreach my $gene( sort {lc($a) cmp lc($b)} keys %gois ){
 #    foreach my $gene( @sorted_genes ){
 	foreach my $from (@parseit){
@@ -191,6 +192,7 @@ sub make_supplements{
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
+            $index_entries .= index_entry_detailed($template_path,$gois{$gene}{$from}{NAME},$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc);
 	    my $goi_vars = 
 	    {   
 		name		  => $gois{$gene}{$from}{NAME},
@@ -299,16 +301,15 @@ sub make_supplements{
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
 	}
     }
-    #construct index.hmtl
-#    my $index_path = $html_destination_path. "/index.html";
-#    my $index_file = 'index.html';
-#    my $index_entries = index_entry(\%genelist);
-##(name,synonyme, 4 links, max-table wuerden reichen)
-#    my $index_vars = 
-#	{
-#	    genesofinterests => $index_entries
-#	};
-#    $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
+#construct index.hmtl
+    my $index_path = $html_destination_path. "/index.html";
+    my $index_file = 'index.html';
+    #my $index_entries = index_entry(\%genelist);
+    my $index_vars = 
+	{
+	    genesofinterests => $index_entries
+	};
+    $template->process($index_file,$index_vars,$index_path) || die "Template process failed: ", $template->error(), "\n";
     chdir($wdir) or die "$!";
 }
 
