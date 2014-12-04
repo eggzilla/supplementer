@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-04 14:56:17 fall> by joerg
+### Last changed Time-stamp: <2014-12-04 15:18:44 fall> by joerg
 
 ###############
 ###Use stuff
@@ -102,7 +102,7 @@ make_supplements(\%genes,$html_destination_path);
 
 sub make_supplements{
     my %gois = %{$_[0]};
-    print Dumper(\%gois);
+#    print Dumper(\%gois);
     #check arguments
     die ("ERROR $html_destination_path does not exist\n") unless (-d $html_destination_path);
 #    die ("ERROR no URL (network location) provided") unless(defined $base_URL);
@@ -185,16 +185,18 @@ sub make_supplements{
 	    }
 
 ### Parse DESeq
-	    my (@dsamp, @dcondi, @ddeg, @dmax, @dfold) = ();
+	    my (@dsamp, @dcondi, @ddeg, @dmax, @dfold, @defold) = ();
 	    foreach my $sample (keys %{$gois{$gene}{$from}{DLOGEXPRESSION}} ){
 		push @dsamp, $sample;
 		foreach my $condition (keys %{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}} ){
 		    my $cufflinks = join(",",@{$gois{$gene}{$from}{DE}{$sample}{$condition}}) if ($from eq 'DESeq' && defined $gois{$gene}{$from}{DE}{$sample}{$condition});
 #		    my $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    my $fold_change = join(",",@{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition});
+		    my $defold_change = join(",",@{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition});
 		    push @ddeg, $cufflinks;
 #		    push @tmax, $maxy;
 		    push @dfold, $fold_change;
+		    push @defold, $defold_change;
 		    push @dcondi, $condition;
 		}
 	    }
@@ -504,6 +506,7 @@ sub parse_deseq{
 	my ( $gene, $mb3, $mb7, $mb23, $eb3, $eb7, $eb23, $vb3, $vb7, $vb23, 
 	     $ml37, $ml323, $ml723, $el37, $el323, $el723, $vl37, $vl323, $vl723,
 	     $me3, $mv3, $ev3, $me7, $mv7, $ev7, $me23, $mv23, $ev23 ) = split(/\t/,$line);
+#	next if ($mb3 =~ /NaN|Infinity/ || $el37 =~ /NaN|Infinity/);
 	my $goto;
 	if (defined $entries{$gene}{GOI}){
 	    $goto = "GOI";
@@ -516,18 +519,17 @@ sub parse_deseq{
 	}
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ');
 	my $sampled;
-	if (defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}){
+	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock} || !defined @{$entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}}[0]){
 	    $sampled = 'hg19_mock_ebov';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{ebov}}, ($eb3, $eb7, $eb23);
-	    push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sampled}{LOG}}, ($l3, $l7, $l23);
 	}
-	if (defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock}){
+	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock} || !defined @{$entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock}}[0]){
 	    $sampled = 'hg19_mock_marv';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{marv}}, ($vb3, $vb7, $vb23);
 	}
-	if (defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov}){
+	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov} || !defined @{$entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov}}[0]){
 	    $sampled = 'hg19_ebov_marv';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{ebov}}, ($eb3, $eb7, $eb23);
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{marv}}, ($vb3, $vb7, $vb23);
@@ -540,15 +542,14 @@ sub parse_deseq{
 	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{mock}}, ($ml37, $ml323, $ml723);
 	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{ebov}}, ($el37, $el323, $el723);
 	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{marv}}, ($vl37, $vl323, $vl723);
-	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{DE3}}, ($me3, $mv3, $ev3);
-	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{DE7}}, ($me7, $mv7, $ev7);
-	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{DE23}}, ($me23, $mv23, $ev23);
+	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE3}}, ($me3, $mv3, $ev3);
+	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE7}}, ($me7, $mv7, $ev7);
+	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE23}}, ($me23, $mv23, $ev23);
 #	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
 #	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
 #	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
     }
     return (\%entries);
-    }
 }
 
 sub read_tables{
@@ -840,7 +841,7 @@ sub index_entry{
     return $index_entry;
 }
 sub index_entry_detailed{
-    my $templatePath = shift;
+    my $template_path = shift;
     my $name = shift;
     my $synonyms = shift;
     my $goiid = shift;
