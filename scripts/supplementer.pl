@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 15:14:21 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 15:16:44 fall> by joerg
 
 ###############
 ###Use stuff
@@ -368,7 +368,7 @@ sub tex_content{
     open (LIST,"<","$filetoparse");
     while(<LIST>){
 	chomp(my $line  = $_);
-	next if ($line=~/^%%%%%%%%%%%%%%%%%%%%/);
+	next if ($line=~/^%%%%%%%%%%%%%%%%%%%%% put your text/);
 	push @description,$line;	
 	last if ($line=~/^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%/);
     }
