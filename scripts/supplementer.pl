@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 01:44:56 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 01:49:52 fall> by joerg
 
 ###############
 ###Use stuff
@@ -157,8 +157,8 @@ sub make_supplements{
 		my $maxy = join(",",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
 		push @maxl, $maxy;
 	    }
-	    my $peak = 'NA';
-	    $peak = join(",",@maxl) if (@maxl);
+	    my $peak = join(",",@maxl) if (@maxl);
+	    $peak = 'NA' unless ($peak && $peak !~ /NA/i);
 
 ### Parse Comparison
 	    my (@csamp, @ccondi, @cdeg, @cmax, @cfold) = ();
@@ -229,8 +229,9 @@ sub make_supplements{
 	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
 #	}
-	    my $peakl = 'NA,NA,NA';
-	    $peakl    = join(",",@maxl) if (@maxl);
+	    my $peakl    = join(",",@maxl) if (@maxl);
+	    $peakl = 'NA' unless ($peakl && $peakl !~ /NA/i);
+
 	    my $goi_vars = 
 	    {   
 		name		  => $gois{$gene}{$from}{NAME},
