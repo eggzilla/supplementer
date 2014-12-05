@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 14:45:59 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 14:51:41 fall> by joerg
 
 ###############
 ###Use stuff
@@ -212,7 +212,7 @@ sub make_supplements{
 		    push @dcondi, $condition;
 		}
 	    }
-	    @ddeg = ($deg[0],$deg[1],$deg[3]) unless (@ddeg);
+	    @ddeg = ($deg[0],$deg[1],$deg[3]) unless (($ddeg[0] && $ddeg[0] ne '') || !$deg[0]);
 	    
             my $igv = 'NONE';
 	    $igv = image_entry(${$gois{$gene}{$from}{IGV}}[0],$dir,$odir) if ($from eq 'GOI' || $from eq 'APG');
