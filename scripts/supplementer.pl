@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 15:47:46 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 16:09:12 fall> by joerg
 
 ###############
 ###Use stuff
@@ -539,6 +539,11 @@ sub parse_deseq{
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	my $sampled;
+	if ($goto eq 'DESEQ' || !defined $entries{$gene}{$goto}{CUFFLINKS}){
+	    push @{$entries{$gene}{$goto}{DE}{$sample}{mock}}, ($mb3, $mb7, $mb23);
+	    push @{$entries{$gene}{$goto}{DE}{$sample}{ebov}}, ($eb3, $eb7, $eb23);
+	    push @{$entries{$gene}{$goto}{DE}{$sample}{marv}}, ($vb3, $vb7, $vb23);
+	}
 	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}){
 	    $sampled = 'hg19_mock_ebov';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
@@ -553,11 +558,6 @@ sub parse_deseq{
 	    $sampled = 'hg19_ebov_marv';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{ebov}}, ($eb3, $eb7, $eb23);
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{marv}}, ($vb3, $vb7, $vb23);
-	}
-	if ($goto eq 'DESEQ'){
-	    push @{$entries{$gene}{$goto}{DE}{$sample}{mock}}, ($mb3, $mb7, $mb23);
-	    push @{$entries{$gene}{$goto}{DE}{$sample}{ebov}}, ($eb3, $eb7, $eb23);
-	    push @{$entries{$gene}{$goto}{DE}{$sample}{marv}}, ($vb3, $vb7, $vb23);
 	}
 	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{mock}}, ($ml37, $ml323, $ml723);
 	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{ebov}}, ($el37, $el323, $el723);
