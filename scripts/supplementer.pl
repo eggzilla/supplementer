@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 13:52:01 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 14:45:59 fall> by joerg
 
 ###############
 ###Use stuff
@@ -203,8 +203,7 @@ sub make_supplements{
 	    foreach my $sample (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{DLOGEXPRESSION}} ){
 		push @dsamp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}} ){
-		    my $cufflinks = join(",",@{$gois{$gene}{$from}{DE}{$sample}{$condition}}) if ($from eq 'DESeq' && defined $gois{$gene}{$from}{DE}{$sample}{$condition});
-#		    my $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    my $cufflinks = join(",",@{$gois{$gene}{$from}{DE}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DE}{$sample}{$condition});
 		    my $fold_change = join(",",@{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition});
 		    my $defold_change = join(",",@{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition});
 		    push @ddeg, $cufflinks;
@@ -213,6 +212,7 @@ sub make_supplements{
 		    push @dcondi, $condition;
 		}
 	    }
+	    @ddeg = ($deg[0],$deg[1],$deg[3]) unless (@ddeg);
 	    
             my $igv = 'NONE';
 	    $igv = image_entry(${$gois{$gene}{$from}{IGV}}[0],$dir,$odir) if ($from eq 'GOI' || $from eq 'APG');
@@ -504,25 +504,25 @@ sub parse_deseq{
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	my $sampled;
-	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock} || !defined @{$entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}}[0]){
+	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}){
 	    $sampled = 'hg19_mock_ebov';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{ebov}}, ($eb3, $eb7, $eb23);
 	}
-	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock} || !defined @{$entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock}}[0]){
+	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock}){
 	    $sampled = 'hg19_mock_marv';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{marv}}, ($vb3, $vb7, $vb23);
 	}
-	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov} || !defined @{$entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov}}[0]){
+	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov}){
 	    $sampled = 'hg19_ebov_marv';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{ebov}}, ($eb3, $eb7, $eb23);
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{marv}}, ($vb3, $vb7, $vb23);
 	}
-	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_ebov_marv}{ebov} && !defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_marv}{mock} && !defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}){
-	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{mock}}, ($mb3, $mb7, $mb23);
-	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{ebov}}, ($eb3, $eb7, $eb23);
-	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sample}{marv}}, ($vb3, $vb7, $vb23);
+	if ($goto eq 'DESEQ'){
+	    push @{$entries{$gene}{$goto}{DE}{$sample}{mock}}, ($mb3, $mb7, $mb23);
+	    push @{$entries{$gene}{$goto}{DE}{$sample}{ebov}}, ($eb3, $eb7, $eb23);
+	    push @{$entries{$gene}{$goto}{DE}{$sample}{marv}}, ($vb3, $vb7, $vb23);
 	}
 	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{mock}}, ($ml37, $ml323, $ml723);
 	push @{$entries{$gene}{$goto}{DLOGEXPRESSION}{$sample}{ebov}}, ($el37, $el323, $el723);
@@ -530,9 +530,6 @@ sub parse_deseq{
 	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE3}}, ($me3, $mv3, $ev3);
 	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE7}}, ($me7, $mv7, $ev7);
 	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE23}}, ($me23, $mv23, $ev23);
-#	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
-#	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
-#	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
     }
     return (\%entries);
 }
