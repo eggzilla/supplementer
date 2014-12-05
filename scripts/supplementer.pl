@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 17:27:20 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 17:28:14 fall> by joerg
 
 ###############
 ###Use stuff
@@ -391,8 +391,8 @@ sub tex_content{
     else{
 	push @description, 'No TeX file found!\n';
     }
-    my $description = join @description, "\n";
-    return $description;
+    my $descript = join @description, "\n";
+    return $descript;
 }
 
 sub parse_expression{
