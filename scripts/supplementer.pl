@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 14:51:41 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 15:02:55 fall> by joerg
 
 ###############
 ###Use stuff
@@ -205,11 +205,13 @@ sub make_supplements{
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}} ){
 		    my $cufflinks = join(",",@{$gois{$gene}{$from}{DE}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DE}{$sample}{$condition});
 		    my $fold_change = join(",",@{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition});
-		    my $defold_change = join(",",@{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition});
 		    push @ddeg, $cufflinks;
 		    push @dfold, $fold_change;
-		    push @defold, $defold_change;
 		    push @dcondi, $condition;
+		}
+		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}} ){
+		    my $defold_change = join(",",@{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition});
+		    push @defold, $defold_change;
 		}
 	    }
 	    @ddeg = ($deg[0],$deg[1],$deg[3]) unless (($ddeg[0] && $ddeg[0] ne '') || !$deg[0]);
