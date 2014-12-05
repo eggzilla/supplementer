@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 15:16:44 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 15:32:18 fall> by joerg
 
 ###############
 ###Use stuff
@@ -229,7 +229,8 @@ sub make_supplements{
 #            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
 	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
-            my $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX});
+            my $texcontent = 'NA';
+	    $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX}) if ($gois{$gene}{$from}{TEX});
 #	}
 #	    my $peakl    = join(",",@maxl) if (@maxl);
 #	    $peakl = 'NA' unless ($peakl && $peakl !~ /NA/i);
@@ -390,7 +391,7 @@ sub parse_expression{
     my @samples = split(/_/,$sample);
     my %entries	    = %{$_[1]};
     print STDERR "Expression parsing $sample @samples!\n";
-    open (LIST,"<","$filetoparse");
+    open (LIST,"<","$filetoparse") || die "$!\n";
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
@@ -429,7 +430,7 @@ sub parse_comparison{
     my @samples = split(/_/,$sample);
     my %entries	    = %{$_[1]};
     print STDERR "Comparison parsing $sample!\n";
-    open (LIST,"<","$filetoparse");
+    open (LIST,"<","$filetoparse") || die "$!\n";
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
@@ -465,7 +466,7 @@ sub parse_timepoints{
     my @samples = ('mock','ebov','marv');
     my %entries	    = %{$_[1]};
     print STDERR "Timepoint parsing $sample!\n";
-    open (LIST,"<","$filetoparse");
+    open (LIST,"<","$filetoparse") || die "$!\n";
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
@@ -505,7 +506,7 @@ sub parse_deseq{
     my @samples = split(/\_/,$sample);
     my %entries	    = %{$_[1]};
     print STDERR "Timepoint parsing $sample!\n";
-    open (LIST,"<","$filetoparse");
+    open (LIST,"<","$filetoparse") || die "$!\n";
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
@@ -561,7 +562,7 @@ sub read_tables{
     my %entries	    = %{$_[1]};
     my @again;
     print STDERR "Parsing $filetoparse!\n";
-    open (my $list,"<","$filetoparse");
+    open (my $list,"<","$filetoparse") || die "$!\n";
     my @process = <$list>;
 
     if ($filetoparse =~ /goi/i){
