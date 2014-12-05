@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 00:46:10 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 01:09:17 fall> by joerg
 
 ###############
 ###Use stuff
@@ -123,6 +123,7 @@ sub make_supplements{
     my @parseit = ('GOI', 'APG', 'EXPRESSION', 'TIMEPOINTS' , 'COMPARISON', 'DESEQ');
 #    my @sorted_genes = 	map { $_->[0] } sort { $a->[1] cmp $b->[1] } map { [ $_, uc($_) ] } keys %gois;
     my $index_entries;
+    my %peaks;
     foreach my $gene( sort {lc($a) cmp lc($b)} keys %gois ){
 #    foreach my $gene( @sorted_genes ){
 	foreach my $from (@parseit){
@@ -134,7 +135,6 @@ sub make_supplements{
 	    my $name = $gene;
 	    $genelist{$name}=$goi;
 ### Parse Expression
-print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 	    my (@samp, @condi, @deg, @max, @fold) = ();
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
 		my $fold_change = join(",",@{$gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG});
@@ -144,12 +144,18 @@ print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 #		print STDERR "$sample\t$condition\t$from\t$gene\n";
 		    my $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition});
 		    @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition}); ## get rid of empty entries
-		    my $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    @{$peaks{$gene}{$from}{$condition}} = @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    push @deg, $cufflinks;
-		    push @max, $maxy;
 		    push @condi, $condition;
 		}
 	    }
+### Parse peaks separate for each condition, independent of sample to get rid of reocurring values
+	    foreach my $condition ( keys %{$peaks{$gene}{$from}} ){
+		my $maxy = join(",",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
+		push @max, $maxy;
+	    }
+	    my $peak = 'NA,NA,NA';
+	    $peak = join(",",@max) if (@max);
 
 ### Parse Comparison
 	    my (@csamp, @ccondi, @cdeg, @cmax, @cfold) = ();
@@ -216,19 +222,16 @@ print STDERR "$gene,$from,$goi,$name\n" if ($gene eq 'SLY');
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
-	    @max = @{unique_array(\@max)};
-	    my $peaks = 'NA';
-	    $peaks = join(",",@max) if (@max);
 #            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
 	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
-	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peaks);
+	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
 #	}
 	    my $goi_vars = 
 	    {   
 		name		  => $gois{$gene}{$from}{NAME},
 		synonyms	  => $syn,
 		goiid		  => $gois{$gene}{$from}{ID},
-		maxy		  => $peaks,
+		maxy		  => $peak,
 		textxt		  => $tex_link,
 		igv		  => $igv,
 		sashimi		  => $sashimi,
@@ -461,9 +464,9 @@ sub parse_expression{
 	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
 	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
-	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}} = @{unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}})};
+#	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}} = @{unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}})};
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
-	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}} = @{unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}})};
+#	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}} = @{unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}})};
     }
     return (\%entries);
 }
