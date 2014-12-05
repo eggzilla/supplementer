@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 17:13:11 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 17:24:13 fall> by joerg
 
 ###############
 ###Use stuff
@@ -243,6 +243,7 @@ sub make_supplements{
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
             my $texcontent = 'NA';
 	    $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX}) if ($from eq 'GOI' || $from eq 'APG');
+	    print STDERR $texcontent if ($texcontent ne 'NA');
 #	}
 #	    my $peakl    = join(",",@maxl) if (@maxl);
 #	    $peakl = 'NA' unless ($peakl && $peakl !~ /NA/i);
@@ -371,29 +372,7 @@ sub make_supplements{
     chdir($wdir) or die "$!";
 }
 
-sub tex_content{
-    my $wdir = shift;
-    my $dir = shift;
-    my $file = shift;
-    my $filetoparse = $wdir . "/" . $dir ."/". $file;
-    my @description;
-    my $read=0;
-    if (-e $filetoparse){
-	open (LIST,"<","$filetoparse") || die "$!";
-	while(<LIST>){
-	    chomp(my $line  = $_);
-	    next if ($line =~ /genetoclevel|put your text|^$/);
-	    push @description, $line unless ($line=~/^%%%%%%%%%%%%%%%%%%%%%/);	
-	    last if ($line=~/^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%/);
-	}
-	print STDERR "@description\n";
-    }
-    else{
-	push @description, 'No TeX file found!\n';
-    }
-    my $description = join @description, "\n";
-    return $description;
-}
+
 
 sub parse_expression{
 #HG19 Mock vs Ebola 
