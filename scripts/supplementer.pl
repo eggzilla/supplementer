@@ -229,7 +229,7 @@ sub make_supplements{
 #            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
 	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
-            $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX});
+            my $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX});
 #	}
 #	    my $peakl    = join(",",@maxl) if (@maxl);
 #	    $peakl = 'NA' unless ($peakl && $peakl !~ /NA/i);
@@ -362,7 +362,7 @@ sub tex_content{
     my $wdir = shift;
     my $dir = shift;
     my $file = shift;
-    my $filetoparse = $wdir . "/" . $dir ."/". $file
+    my $filetoparse = $wdir . "/" . $dir ."/". $file;
     my @description;
     my $read=0;
     open (LIST,"<","$filetoparse");
@@ -375,7 +375,7 @@ sub tex_content{
 	if($line=~/^%%%%%%%%%%%%%%%%%%%%/){
 		if($read==0){
 			$read=1;
-		}else
+		}else{
 			$read=0;
 			unshift @description;
 		}	
@@ -927,7 +927,7 @@ sub link_entry{
         my @file = split ("/", $file);
         my $filename = $file[2];
         my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
-        $file ~= s/.tex/.pdf/;
+        $file =~ s/.tex/.pdf/;
         my $filelink = $wdir . "/" . $dir ."/". $file;
         $link_entry = "<a href=\"$filelink\">pdf</a>";
     }
