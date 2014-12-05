@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 02:02:30 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 13:04:36 fall> by joerg
 
 ###############
 ###Use stuff
@@ -188,8 +188,8 @@ sub make_supplements{
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{MEV}{$sample}} ){
 #		print STDERR $condition,"\n";
 		    my $cufflinks = join(",",@{$gois{$gene}{$from}{MEV}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{MEV}{$sample}{$condition});
-		    @{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{CPEAKS}{$sample}{$condition});
-		    my $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    @{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{TPEAKS}{$sample}{$condition});
+		    my $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{TPEAKS}{$sample}{$condition});
 		    my $fold_change = join(",",@{$gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{LOG});
 		    push @tdeg, $cufflinks;
 		    push @tmax, $maxy;
@@ -199,7 +199,7 @@ sub make_supplements{
 	    }
 
 ### Parse DESeq
-	    my (@dsamp, @dcondi, @ddeg, @dmax, @dfold, @defold) = ();
+	    my (@dsamp, @dcondi, @ddeg, @dfold, @defold) = ();
 	    foreach my $sample (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{DLOGEXPRESSION}} ){
 		push @dsamp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}} ){
@@ -208,7 +208,6 @@ sub make_supplements{
 		    my $fold_change = join(",",@{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition});
 		    my $defold_change = join(",",@{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition});
 		    push @ddeg, $cufflinks;
-#		    push @tmax, $maxy;
 		    push @dfold, $fold_change;
 		    push @defold, $defold_change;
 		    push @dcondi, $condition;
@@ -254,7 +253,7 @@ sub make_supplements{
 		condtwo		  => $condi[1],
 		maxy_two	  => $max[1],
 		cufflinks_two     => $deg[1],
-		fold		  => $fold[1],
+		fold_two	  => $fold[1],
 ##sample2
 		sampleone	  => $samp[1],
 ##sample 2 condition1
@@ -276,7 +275,7 @@ sub make_supplements{
 		foldt		  => $fold[4],    
 ##sample 3 condition2
 		condttwo	  => $condi[5],
-		maxyo_two	  => $max[5],
+		maxyt_two	  => $max[5],
 		cufflinkst_two    => $deg[5],
 		foldt_two         => $fold[5],
 ###Comparison
@@ -335,7 +334,7 @@ sub make_supplements{
 		tcufflinkso_two   => $tdeg[4],
 		tfoldo_two        => $tfold[4],
 ##sample 2 condition3
-		tcondthree	  => $tcondi[5],
+		tcondothree	  => $tcondi[5],
 		tmaxyo_three      => $tmax[5],
 		tcufflinkso_three => $tdeg[5],
 		tfoldo_three      => $tfold[5],
@@ -361,19 +360,19 @@ sub make_supplements{
 		dsample		  => $dsamp[0],
 ##sample 1 condition1
 		dcondone	  => $dcondi[0],
-		dmaxy		  => $dmax[0],
+#		dmaxy		  => $dmax[0],
 		dcufflinks	  => $ddeg[0],
 		dfold             => $dfold[0],
 		defold            => $defold[0],
 ##sample1 condition2
 		dcondtwo	  => $dcondi[1],
-		dmaxy_two	  => $dmax[1],
+#		dmaxy_two	  => $dmax[1],
 		dcufflinks_two    => $ddeg[1],
 		dfold_two         => $dfold[1],
 		defold_two        => $defold[1],
 ##sample1 condition3
 		dcondthree	  => $dcondi[2],
-		dmaxy_three	  => $dmax[2],
+#		dmaxy_three	  => $dmax[2],
 		dcufflinks_three  => $ddeg[2],
 		dfold_three       => $dfold[2],
 		defold_three      => $defold[2],
@@ -381,19 +380,19 @@ sub make_supplements{
 		dsampleone	  => $dsamp[1],
 ##sample 2 condition1
 		dcondoone	  => $dcondi[3],
-		dmaxyo		  => $dmax[3],
+#		dmaxyo		  => $dmax[3],
 		dcufflinkso	  => $ddeg[3],
 		dfoldo            => $dfold[3],
 		defoldo           => $defold[3],
 ##sample 2 condition2
 		dcondotwo	  => $dcondi[4],
-		dmaxyo_two	  => $dmax[4],
+#		dmaxyo_two	  => $dmax[4],
 		dcufflinkso_two   => $ddeg[4],
 		dfoldo_two        => $dfold[4],
 		defoldo_two       => $defold[4],
 ##sample 2 condition3
 		dcondothree	  => $dcondi[5],
-		dmaxyo_three      => $dmax[5],
+#		dmaxyo_three      => $dmax[5],
 		dcufflinkso_three => $ddeg[5],
 		dfoldo_three      => $dfold[5],
 		defoldo_three     => $defold[5],
@@ -401,19 +400,19 @@ sub make_supplements{
 		dsampletwo	  => $dsamp[2],
 ##sample 3 condition1
 		dcondtone	  => $dcondi[6],
-		dmaxyt		  => $dmax[6],
+#		dmaxyt		  => $dmax[6],
 		dcufflinkst	  => $ddeg[6],
 		dfoldt            => $dfold[6],
-		defolt            => $defold[6],
+		defoldt           => $defold[6],
 ##sample 3 condition2
 		dcondttwo	  => $dcondi[7],
-		dmaxyt_dwo	  => $dmax[7],
-		dcufflinkst_dwo   => $ddeg[7],        
+#		dmaxyt_dwo	  => $dmax[7],
+		dcufflinkst_two   => $ddeg[7],        
 		dfoldt_two        => $dfold[7],
 		defoldt_two       => $defold[7],
 ##sample 3 condition3
 		dcondtthree	  => $dcondi[8],
-		dmaxyt_three      => $dmax[8],
+#		dmaxyt_three      => $dmax[8],
 		dcufflinkst_three => $ddeg[8],
 		dfoldt_three	  => $dfold[8],
 		defoldt_three	  => $defold[8]
