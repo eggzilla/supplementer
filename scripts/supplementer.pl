@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 16:09:12 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 17:13:11 fall> by joerg
 
 ###############
 ###Use stuff
@@ -242,7 +242,7 @@ sub make_supplements{
 	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
             my $texcontent = 'NA';
-	    $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX}) if ($gois{$gene}{$from}{TEX});
+	    $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX}) if ($from eq 'GOI' || $from eq 'APG');
 #	}
 #	    my $peakl    = join(",",@maxl) if (@maxl);
 #	    $peakl = 'NA' unless ($peakl && $peakl !~ /NA/i);
@@ -378,12 +378,18 @@ sub tex_content{
     my $filetoparse = $wdir . "/" . $dir ."/". $file;
     my @description;
     my $read=0;
-    open (LIST,"<","$filetoparse");
-    while(<LIST>){
-	chomp(my $line  = $_);
-	next if ($line=~/^%%%%%%%%%%%%%%%%%%%%% put your text/);
-	push @description,$line;	
-	last if ($line=~/^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%/);
+    if (-e $filetoparse){
+	open (LIST,"<","$filetoparse") || die "$!";
+	while(<LIST>){
+	    chomp(my $line  = $_);
+	    next if ($line =~ /genetoclevel|put your text|^$/);
+	    push @description, $line unless ($line=~/^%%%%%%%%%%%%%%%%%%%%%/);	
+	    last if ($line=~/^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%/);
+	}
+	print STDERR "@description\n";
+    }
+    else{
+	push @description, 'No TeX file found!\n';
     }
     my $description = join @description, "\n";
     return $description;
@@ -539,11 +545,11 @@ sub parse_deseq{
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	my $sampled;
-	if ($goto eq 'DESEQ' || !defined $entries{$gene}{$goto}{CUFFLINKS}){
+#	if ($goto eq 'DESEQ' || (!defined $entries{$gene}{GOI}{CUFFLINKS} && !defined $entries{$gene}{APG}{CUFFLINKS})){
 	    push @{$entries{$gene}{$goto}{DE}{$sample}{mock}}, ($mb3, $mb7, $mb23);
 	    push @{$entries{$gene}{$goto}{DE}{$sample}{ebov}}, ($eb3, $eb7, $eb23);
 	    push @{$entries{$gene}{$goto}{DE}{$sample}{marv}}, ($vb3, $vb7, $vb23);
-	}
+#	}
 	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}){
 	    $sampled = 'hg19_mock_ebov';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
