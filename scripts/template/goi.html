@@ -72,16 +72,19 @@
     <!-------- GOI/APG -------->
     <table>
       <tr>
-        <th colspan="6">
+        <th colspan="5">
           [% sample %]
         </th>
       </tr>
       <tr>
-        <td colspan="3">
+        <td colspan="2">
           [% condone %]
         </td>
-        <td colspan="3">
+        <td colspan="2">
           [% condtwo %]
+        </td>
+        <td>
+          differential expression
         </td>
       </tr>
       <tr>
@@ -90,9 +93,6 @@
         </td>
         <td>
           expression
-        </td>
-        <td>
-          fold change
         </td>
         <td>
           read_max
@@ -112,31 +112,31 @@
           [% cufflinks %]
         </td>
         <td>
-          [% fold %]
-        </td>
-        <td>
           [% maxy_two %]
         </td>
         <td>
           [% cufflinks_two %]
         </td>
         <td>
-          [% fold_two %]
+         [% fold %]
         </td>
       </tr>
     </table>
     <table>
       <tr>
-        <th colspan="6">
+        <th colspan="5">
           [% sampleone %]
         </th>
       </tr>
       <tr>
-        <td colspan="3">
+        <td colspan="2">
           [% condoone %]
         </td>
-        <td colspan="3">
+        <td colspan="2">
           [% condotwo %]
+        </td>
+        <td >
+           differential expression
         </td>
       </tr>
       <tr>
@@ -145,9 +145,6 @@
         </td>
         <td>
           expression
-        </td>
-        <td>
-          fold change
         </td>
         <td>
           read_max
@@ -167,31 +164,31 @@
           [% cufflinkso %]
         </td>
         <td>
-          [% foldo %]
-        </td>
-        <td>
           [% maxyo_two %]
         </td>
         <td>
           [% cufflinkso_two %]
         </td>
         <td>
-          [% foldo_two %]
+          [% foldo %]
         </td>
       </tr>
     </table>
     <table>
       <tr>
-        <th colspan="6">
+        <th colspan="5">
           [% sampletwo %]
         </th>
       </tr>
       <tr>
-        <td colspan="3">
+        <td colspan="2">
           [% condtone %]
         </td>
-        <td colspan="3">
+        <td colspan="2">
           [% condttwo %]
+        </td>
+         <td>
+          differential expression
         </td>
       </tr>
       <tr>
@@ -200,9 +197,6 @@
         </td>
         <td>
           expression
-        </td>
-        <td>
-          fold change
         </td>
         <td>
           read_max
@@ -222,32 +216,32 @@
           [% cufflinkst %]
         </td>
         <td>
-          [% foldt %]
-        </td>
-        <td>
           [% maxyt_two %]
         </td>
         <td>
           [% cufflinkst_two %]
         </td>
         <td>
-          [% foldt_two %]
+          [% foldt %]
         </td>
       </tr>
     </table>
     <!----- COMPARISON ----->
     <table>
       <tr>
-        <th colspan="6">
+        <th colspan="5">
           [% csample %]
         </th>
       </tr>
       <tr>
-        <td colspan="3">
+        <td colspan="2">
           [% ccondone %]
         </td>
-        <td colspan="3">
+        <td colspan="2">
           [% ccondtwo %]
+        </td>
+        <td >
+          differential expression
         </td>
       </tr>
       <tr>
@@ -256,9 +250,6 @@
         </td>
         <td>
           expression
-        </td>
-        <td>
-          fold change
         </td>
         <td>
           read_max
@@ -278,31 +269,31 @@
           [% ccufflinks %]
         </td>
         <td>
-          [% cfold %]
-        </td>
-        <td>
           [% cmaxy_two %]
         </td>
         <td>
           [% ccufflinks_two %]
         </td>
         <td>
-          [% cfold_two %]
+          [% cfold%]
         </td>
       </tr>
     </table>
     <table>
       <tr>
-        <th colspan="6">
+        <th colspan="5">
           [% csampleone %]
         </th>
       </tr>
       <tr>
-        <td colspan="3">
+        <td colspan="2">
           [% ccondoone %]
         </td>
-        <td colspan="3">
+        <td colspan="2">
           [% ccondotwo %]
+        </td>
+         <td>
+          differential expression
         </td>
       </tr>
       <tr>
@@ -311,9 +302,6 @@
         </td>
         <td>
           expression
-        </td>
-        <td>
-          fold change
         </td>
         <td>
           read_max
@@ -333,16 +321,13 @@
           [% ccufflinkso %]
         </td>
         <td>
-          [% cfoldo %]
-        </td>
-        <td>
           [% cmaxyo_two %]
         </td>
         <td>
           [% ccufflinkso_two %]
         </td>
         <td>
-          [% cfoldo_two %]
+          [% cfold %]
         </td>
       </tr>
     </table>
@@ -423,158 +408,7 @@
         </td>
       </tr>
     </table>
-    <table>
-      <tr>
-        <th colspan="9">
-          [% tsampleone %]
-        </th>
-      </tr>
-      <tr>
-        <td colspan="3">
-          [% tcondoone %]
-        </td>
-        <td colspan="3">
-          [% tcondotwo %]
-        </td>
-        <td colspan="3">
-          [% tcondothree %]
-        </td>
-      </tr>
-      <tr>
-        <td>
-          read_max
-        </td>
-        <td>
-          expression
-        </td>
-        <td>
-          fold change
-        </td>
-        <td>
-          read_max
-        </td>
-        <td>
-          expression
-        </td>
-        <td>
-          fold change
-        </td>
-        <td>
-          read_max
-        </td>
-        <td>
-          expression
-        </td>
-        <td>
-          fold change
-        </td>
-      </tr>
-      <tr>
-        <td>
-          [% tmaxyo %]
-        </td>
-        <td>
-          [% tcufflinkso %]
-        </td>
-        <td>
-          [% tfoldo  %]
-        </td>
-        <td>
-          [% tmaxyo_two %]
-        </td>
-        <td>
-          [% tcufflinkso_two %]
-        </td>
-        <td>
-          [% tfoldo_two  %]
-        </td>
-        <td>
-          [% tmaxyo_three %]
-        </td>
-        <td>
-          [% tcufflinkso_three %]
-        </td>
-        <td>
-          [% tfoldo_three %]
-        </td>
-      </tr>
-    </table>
-    <table>
-      <tr>
-        <th colspan="9">
-          [% tsampletwo %]
-        </th>
-      </tr>
-      <tr>
-        <td colspan="3">
-          [% tcondtone %]
-        </td>
-        <td colspan="3">
-          [% tcondttwo %]
-        </td>
-        <td colspan="3">
-          [% tcondtthree %]
-        </td>
-      </tr>
-      <tr>
-        <td>
-          read_max
-        </td>
-        <td>
-          expression
-        </td>
-        <td>
-          fold
-        </td>
-        <td>
-          read_max
-        </td>
-        <td>
-          expression
-        </td>
-        <td>
-          fold change
-        </td>
-        <td>
-          read_max
-        </td>
-        <td>
-          expression
-        </td>
-        <td>
-          fold change
-        </td>
-      </tr>
-      <tr>
-        <td>
-          [% tmaxyt %]
-        </td>
-        <td>
-          [% tcufflinkst %]
-        </td>
-        <td>
-          [% tfoldt %]
-        </td>
-        <td>
-          [% tmaxyt_two %]
-        </td>
-        <td>
-          [% tcufflinkst_two %]
-        </td>
-        <td>
-          [% tfoldt_two %]
-        </td>
-        <td>
-          [% tmaxyt_three %]
-        </td>
-        <td>
-          [% tcufflinkst_three %]
-        </td>
-        <td>
-          [% tfoldt_three %]
-        </td>
-      </tr>
-    </table>
+  
     <!----- DESeq -------------->
     <table>
       <tr>
@@ -649,153 +483,6 @@
         </td>
         <td>
           [% defold_three %]
-        </td>
-      </tr>
-    </table>
-    <table>
-      <tr>
-        <th colspan="9">
-          [% dsampleone %]
-        </th>
-      </tr>
-      <tr>
-        <td colspan="3">
-          [% dcondoone %]
-        </td>
-        <td colspan="3">
-          [% dcondotwo %]
-        </td>
-        <td colspan="3">
-          [% dcondothree %]
-        </td>
-      </tr>
-      <tr>
-        <td>
-          expression
-        </td>
-        <td>
-          time dependend fold change
-        </td>
-        <td>
-          sample dependend fold change
-        </td>
-        <td>
-          expression
-        </td>
-        <td>
-          time dependend fold change
-        </td>
-        <td>
-          sample dependend fold change
-        <td>
-          expression
-        </td>
-        <td>
-          time dependend fold change
-        </td>
-        <td>
-          sample dependend fold change
-      </tr>
-      <tr>
-        <td>
-          [% dcufflinkso %]
-        </td>
-        <td>
-          [% dfoldo   %]
-        </td>
-        <td>
-          [% defoldo   %]
-        </td>
-        <td>
-          [% dcufflinkso_two %]
-        </td>
-        <td>
-          [% dfoldo_two %]
-        </td>
-        <td>
-          [% defoldo_two %]
-        </td>
-        <td>
-          [% dcufflinkso_three %]
-        </td>
-        <td>
-          [% dfoldo_three %]
-        </td>
-        <td>
-          [% defoldo_three %]
-        </td>
-      </tr>
-    </table>
-    <table>
-      <tr>
-        <th colspan="9">
-          [% dsampletwo %]
-        </th>
-      </tr>
-      <tr>
-        <td colspan="3">
-          [% dcondtone %]
-        </td>
-        <td colspan="3">
-          [% dcondttwo %]
-        </td>
-        <td colspan="3">
-          [% dcondtthree %]
-        </td>
-      </tr>
-      <tr>
-        <td>
-          expression
-        </td>
-        <td>
-          time dependend fold change
-        </td>
-        <td>
-          sample dependend fold change
-        <td>
-          expression
-        </td>
-        <td>
-          time dependend fold change
-        </td>
-        <td>
-          sample dependend fold change
-        <td>
-          expression
-        </td>
-        <td>
-          time dependend fold change
-        </td>
-        <td>
-          sample dependend fold change
-      </tr>
-      <tr>
-        <td>
-          [% dcufflinkst %]
-        </td>
-        <td>
-          [% dfoldt %]
-        </td>
-        <td>
-          [% defoldt %]
-        </td>
-        <td>
-          [% dcufflinkst_two %]
-        </td>
-        <td>
-          [% dfoldt_two %]
-        </td>
-        <td>
-          [% defoldt_two %]
-        </td>
-        <td>
-          [% dcufflinkst_three %]
-        </td>
-        <td>
-          [% dfoldt_three %]
-        </td>
-        <td>
-          [% defoldt_three %]
         </td>
       </tr>
     </table>
