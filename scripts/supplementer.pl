@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 17:26:49 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 17:27:20 fall> by joerg
 
 ###############
 ###Use stuff
@@ -378,20 +378,20 @@ sub tex_content{
     my $file = shift;
     my $filetoparse = $wdir . "/" . $dir ."/". $file;
     my @description;
-    my $description;
     my $read=0;
-    if(-e $filetoparse){
-        open (LIST,"<","$filetoparse");
-        while(<LIST>){
-            chomp(my $line  = $_);
-            next if ($line=~/^%%%%%%%%%%%%%%%%%%%%%/);
-            push @description,$line;	
-            last if ($line=~/^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%/);
-        }
-        $description = join @description, "\n";
-    }else{
-        $description = "no description available"
+    if (-e $filetoparse){
+	open (LIST,"<","$filetoparse") || die "$!";
+	while(<LIST>){
+	    chomp(my $line  = $_);
+	    next if ($line =~ /genetoclevel|put your text|^$/);
+	    push @description, $line unless ($line=~/^%%%%%%%%%%%%%%%%%%%%%/);	
+	    last if ($line=~/^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%/);
+	}
     }
+    else{
+	push @description, 'No TeX file found!\n';
+    }
+    my $description = join @description, "\n";
     return $description;
 }
 
