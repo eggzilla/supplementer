@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 15:41:41 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 15:47:46 fall> by joerg
 
 ###############
 ###Use stuff
@@ -137,7 +137,8 @@ sub make_supplements{
 ### Parse Expression
 	    my (@samp, @condi, @deg, @max, @maxl, @fold) = ();
 	    foreach my $sample (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
-		my $fold_change = join(",",@{$gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG});
+		my $fold_change = 'NA';
+		$fold_change = join(",",@{$gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG});
 		push @fold, $fold_change;
 		push @samp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{CUFFLINKS}{$sample}} ){
