@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 13:04:36 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 13:52:01 fall> by joerg
 
 ###############
 ###Use stuff
@@ -190,7 +190,7 @@ sub make_supplements{
 		    my $cufflinks = join(",",@{$gois{$gene}{$from}{MEV}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{MEV}{$sample}{$condition});
 		    @{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{TPEAKS}{$sample}{$condition});
 		    my $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{TPEAKS}{$sample}{$condition});
-		    my $fold_change = join(",",@{$gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{LOG});
+		    my $fold_change = join(",",@{$gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{$condition});
 		    push @tdeg, $cufflinks;
 		    push @tmax, $maxy;
 		    push @tfold, $fold_change;
@@ -253,31 +253,28 @@ sub make_supplements{
 		condtwo		  => $condi[1],
 		maxy_two	  => $max[1],
 		cufflinks_two     => $deg[1],
-		fold_two	  => $fold[1],
 ##sample2
 		sampleone	  => $samp[1],
 ##sample 2 condition1
 		condoone	  => $condi[2],
 		maxyo		  => $max[2],
 		cufflinkso	  => $deg[2],
-		foldo		  => $fold[2],
+		foldo		  => $fold[1],
 ##sample 2 condition2
 		condotwo	  => $condi[3],
 		maxyo_two	  => $max[3],
 		cufflinkso_two    => $deg[3],
-		foldo_two         => $fold[3],
 ##sample 3
 		sampletwo	  => $samp[2],
 ##sample 3 condition1
 		condtone	  => $condi[4],
 		maxyt		  => $max[4],
 		cufflinkst	  => $deg[4],
-		foldt		  => $fold[4],    
+		foldt		  => $fold[2],    
 ##sample 3 condition2
 		condttwo	  => $condi[5],
 		maxyt_two	  => $max[5],
 		cufflinkst_two    => $deg[5],
-		foldt_two         => $fold[5],
 ###Comparison
 ##sample1
 		csample		  => $csamp[0],
@@ -290,19 +287,17 @@ sub make_supplements{
 		ccondtwo	  => $ccondi[1],
 		cmaxy_two	  => $cmax[1],
 		ccufflinks_two    => $cdeg[1],
-		cfold_two         => $cfold[1],
 ##sample2
 		csampleone	  => $csamp[1],
 ##sample 2 condition1
 		ccondoone	  => $ccondi[2],
 		cmaxyo		  => $cmax[2],
 		ccufflinkso	  => $cdeg[2],
-		cfoldo            => $cfold[2],
+		cfoldo            => $cfold[1],
 ##sample 2 condition2
 		ccondotwo	  => $ccondi[3],
 		cmaxyo_two	  => $cmax[3],
 		ccufflinkso_two   => $cdeg[3],
-		cfoldo_two        => $cfold[3],
 ### Timepoints
 ##sample1
 		tsample		  => $tsamp[0],
@@ -321,40 +316,6 @@ sub make_supplements{
 		tmaxy_three	  => $tmax[2],
 		tcufflinks_three  => $tdeg[2],
 		tfold_three       => $tfold[2],
-##sample2
-		tsampleone	  => $tsamp[1],
-##sample 2 condition1
-		tcondoone	  => $tcondi[3],
-		tmaxyo		  => $tmax[3],
-		tcufflinkso	  => $tdeg[3],
-		tfoldo            => $tfold[3],
-##sample 2 condition2
-		tcondotwo	  => $tcondi[4],
-		tmaxyo_two	  => $tmax[4],
-		tcufflinkso_two   => $tdeg[4],
-		tfoldo_two        => $tfold[4],
-##sample 2 condition3
-		tcondothree	  => $tcondi[5],
-		tmaxyo_three      => $tmax[5],
-		tcufflinkso_three => $tdeg[5],
-		tfoldo_three      => $tfold[5],
-##sample 3
-		tsampletwo	  => $tsamp[2],
-##sample 3 condition1
-		tcondtone	  => $tcondi[6],
-		tmaxyt		  => $tmax[6],
-		tcufflinkst	  => $tdeg[6],
-		tfoldt            => $tfold[6],
-##sample 3 condition2
-		tcondttwo	  => $tcondi[7],
-		tmaxyt_two	  => $tmax[7],
-		tcufflinkst_two   => $tdeg[7],        
-		tfoldt_two        => $tfold[7],
-##sample 3 condition3
-		tcondtthree	  => $tcondi[8],
-		tmaxyt_three      => $tmax[8],
-		tcufflinkst_three => $tdeg[8],
-		tfoldt_three      => $tfold[8],
 ### DESeq
 ##sample1
 		dsample		  => $dsamp[0],
@@ -376,46 +337,6 @@ sub make_supplements{
 		dcufflinks_three  => $ddeg[2],
 		dfold_three       => $dfold[2],
 		defold_three      => $defold[2],
-##sample2
-		dsampleone	  => $dsamp[1],
-##sample 2 condition1
-		dcondoone	  => $dcondi[3],
-#		dmaxyo		  => $dmax[3],
-		dcufflinkso	  => $ddeg[3],
-		dfoldo            => $dfold[3],
-		defoldo           => $defold[3],
-##sample 2 condition2
-		dcondotwo	  => $dcondi[4],
-#		dmaxyo_two	  => $dmax[4],
-		dcufflinkso_two   => $ddeg[4],
-		dfoldo_two        => $dfold[4],
-		defoldo_two       => $defold[4],
-##sample 2 condition3
-		dcondothree	  => $dcondi[5],
-#		dmaxyo_three      => $dmax[5],
-		dcufflinkso_three => $ddeg[5],
-		dfoldo_three      => $dfold[5],
-		defoldo_three     => $defold[5],
-##sample 3
-		dsampletwo	  => $dsamp[2],
-##sample 3 condition1
-		dcondtone	  => $dcondi[6],
-#		dmaxyt		  => $dmax[6],
-		dcufflinkst	  => $ddeg[6],
-		dfoldt            => $dfold[6],
-		defoldt           => $defold[6],
-##sample 3 condition2
-		dcondttwo	  => $dcondi[7],
-#		dmaxyt_dwo	  => $dmax[7],
-		dcufflinkst_two   => $ddeg[7],        
-		dfoldt_two        => $dfold[7],
-		defoldt_two       => $defold[7],
-##sample 3 condition3
-		dcondtthree	  => $dcondi[8],
-#		dmaxyt_three      => $dmax[8],
-		dcufflinkst_three => $ddeg[8],
-		dfoldt_three	  => $dfold[8],
-		defoldt_three	  => $defold[8]
 	    };
 
 	    $template->process($goi_file,$goi_vars,$goi_path) || die "Template process failed: ", $template->error(), "\n";	
@@ -519,7 +440,7 @@ sub parse_timepoints{
 ##Gene	MOCK basemean 3h	MOCK basemean 7h	MOCK basemean 23h	EBOV basemean 3h	EBOV basemean 7h	EBOV basemean 23h	MARV basemean 3h	MARV basemean 7h	MARV basemean 23h	MOCK log2(fc) 3hvs7h	MOCK log2(fc) 3hvs23h	MOCK log2(fc) 7hvs23h	EBOV log2(fc) 3hvs7h	EBOV log2(fc) 3hvs23h	EBOV log2(fc) 7hvs23h	MARV log2(fc) 3hvs7h	MARV log2(fc) 3hvs23h	MARV log2(fc) 7hvs23h	padj(max(fc)	MOCK peak 3h	MOCK peak 7h	MOCK peak 23h	EBOV peak 3h	EBOV peak 7h	EBOV peak 23h	MARV peak 3h	MARV peak 7h	MARV peak 23h
     my $filetoparse = $_[0];
     (my $sample = $filetoparse) =~ s/\.csv//;
-    my @samples = split(/\_/,$sample);
+    my @samples = ('mock','ebov','marv');
     my %entries	    = %{$_[1]};
     print STDERR "Timepoint parsing $sample!\n";
     open (LIST,"<","$filetoparse");
@@ -540,15 +461,15 @@ sub parse_timepoints{
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'TIMEPOINTS' && $gene ne '');
 	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'TIMEPOINTS' && $gene ne '');
 	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($mb3, $mb7, $mb23);
-	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($eb3, $eb7, $eb23);
-	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[0]}}, ($mv3, $mv7, $mv23);
-	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{LOG}}, ($ml3, $ml7, $ml23);
-	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{LOG}}, ($el3, $el7, $el23);
-	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{LOG}}, ($vl3, $vl7, $vl23);
+	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[1]}}, ($eb3, $eb7, $eb23);
+	push @{$entries{$gene}{$goto}{MEV}{$sample}{$samples[2]}}, ($mv3, $mv7, $mv23);
+	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{$samples[0]}}, ($ml3, $ml7, $ml23);
+	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{$samples[1]}}, ($el3, $el7, $el23);
+	push @{$entries{$gene}{$goto}{TLOGEXPRESSION}{$sample}{$samples[2]}}, ($vl3, $vl7, $vl23);
 	push @{$entries{$gene}{$goto}{TMAX}{$sample}{PVAL}}, $max;
 	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[0]}}, ($mp3, $mp7, $mp23);
-	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[0]}}, ($ep3, $ep7, $ep23);
-	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[0]}}, ($vp3, $vp7, $vp23);
+	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[1]}}, ($ep3, $ep7, $ep23);
+	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[2]}}, ($vp3, $vp7, $vp23);
     }
     return (\%entries);
 }
