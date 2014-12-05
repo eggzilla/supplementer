@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-05 01:09:17 fall> by joerg
+### Last changed Time-stamp: <2014-12-05 01:44:56 fall> by joerg
 
 ###############
 ###Use stuff
@@ -135,7 +135,7 @@ sub make_supplements{
 	    my $name = $gene;
 	    $genelist{$name}=$goi;
 ### Parse Expression
-	    my (@samp, @condi, @deg, @max, @fold) = ();
+	    my (@samp, @condi, @deg, @max, @maxl, @fold) = ();
 	    foreach my $sample (keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
 		my $fold_change = join(",",@{$gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG});
 		push @fold, $fold_change;
@@ -144,18 +144,21 @@ sub make_supplements{
 #		print STDERR "$sample\t$condition\t$from\t$gene\n";
 		    my $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition});
 		    @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition}); ## get rid of empty entries
+		    my $maxy = 'NA';
+		    $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    @{$peaks{$gene}{$from}{$condition}} = @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    push @deg, $cufflinks;
+		    push @max, $maxy;
 		    push @condi, $condition;
 		}
 	    }
 ### Parse peaks separate for each condition, independent of sample to get rid of reocurring values
 	    foreach my $condition ( keys %{$peaks{$gene}{$from}} ){
 		my $maxy = join(",",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
-		push @max, $maxy;
+		push @maxl, $maxy;
 	    }
-	    my $peak = 'NA,NA,NA';
-	    $peak = join(",",@max) if (@max);
+	    my $peak = 'NA';
+	    $peak = join(",",@maxl) if (@maxl);
 
 ### Parse Comparison
 	    my (@csamp, @ccondi, @cdeg, @cmax, @cfold) = ();
@@ -226,12 +229,14 @@ sub make_supplements{
 	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
 #	}
+	    my $peakl = 'NA,NA,NA';
+	    $peakl    = join(",",@maxl) if (@maxl);
 	    my $goi_vars = 
 	    {   
 		name		  => $gois{$gene}{$from}{NAME},
 		synonyms	  => $syn,
 		goiid		  => $gois{$gene}{$from}{ID},
-		maxy		  => $peak,
+		maxy		  => $peakl,
 		textxt		  => $tex_link,
 		igv		  => $igv,
 		sashimi		  => $sashimi,
