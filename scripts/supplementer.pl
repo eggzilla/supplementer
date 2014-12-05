@@ -377,15 +377,20 @@ sub tex_content{
     my $file = shift;
     my $filetoparse = $wdir . "/" . $dir ."/". $file;
     my @description;
+    my $description;
     my $read=0;
-    open (LIST,"<","$filetoparse");
-    while(<LIST>){
-	chomp(my $line  = $_);
-	next if ($line=~/^%%%%%%%%%%%%%%%%%%%%% put your text/);
-	push @description,$line;	
-	last if ($line=~/^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%/);
+    if(-e $filetoparse){
+        open (LIST,"<","$filetoparse");
+        while(<LIST>){
+            chomp(my $line  = $_);
+            next if ($line=~/^%%%%%%%%%%%%%%%%%%%%%/);
+            push @description,$line;	
+            last if ($line=~/^%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%/);
+        }
+        $description = join @description, "\n";
+    }else{
+        $description = "no description available"
     }
-    my $description = join @description, "\n";
     return $description;
 }
 
