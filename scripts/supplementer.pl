@@ -257,7 +257,7 @@ sub make_supplements{
 		igv		  => $igv || 'NA',
 		sashimi		  => $sashimi || 'NA',
 		ucsc		  => $ucsc || 'NA',
-		additionalplots   => $gois{$gene}{$from}{EXTRA} || 'NA',
+		additionalplots   => additional_plot_entry($gois{$gene}{$from}{EXTRA},${$gois{$gene}{$from}{IGV}}[0],$dir),
                 texcontent        => $texcontent || 'NA',
 ##sample1
 		sample		  => $samp[0] || 'NA',
@@ -935,6 +935,21 @@ sub image_entry{
     return $image_entry;
 }
 
+sub additional_plot_entry{
+    my $additional_plot_entry = shift;
+    my $file = shift;
+    my $dir = shift;
+    my $link_entry;
+    if($additional_plot_entry eq ""){
+        $link_entry = "NA";
+    }else{
+        my @file = split ("/", $file);
+        my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
+        $link_entry = "<a href=\"$snapshotdir\">Additional plots</a>";
+    }
+    return $link_entry;
+}
+
 sub link_entry{
     my $file = shift;
     my $dir = shift;
@@ -942,9 +957,6 @@ sub link_entry{
     if($file eq 'NONE'){
         $link_entry = "NONE";
     }else{
-        my @file = split ("/", $file);
-        my $filename = $file[2];
-        my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
         $file =~ s/.tex/.pdf/;
         my $filelink = $wdir . "/" . $dir ."/". $file;
         $link_entry = "<a href=\"$filelink\">pdf</a>";
