@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-08 15:01:54 fall> by joerg
+### Last changed Time-stamp: <2014-12-08 16:25:44 fall> by joerg
 
 ###############
 ###Use stuff
@@ -420,6 +420,9 @@ sub parse_expression{
 	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
+	elsif((keys %{$entries{$gene}})[0]){
+	    $goto = (keys %{$entries{$gene}})[0];
+	}
 	else{
 	    $goto = "EXPRESSION";
 	}
@@ -459,7 +462,7 @@ sub parse_comparison{
 	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
-	elsif(defined $entries{$gene}){
+	elsif((keys %{$entries{$gene}})[0]){
 	    $goto = (keys %{$entries{$gene}})[0];
 	}
 	else{
@@ -498,7 +501,7 @@ sub parse_timepoints{
 	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
-	elsif(defined $entries{$gene}){
+	elsif((keys %{$entries{$gene}})[0]){
 	    $goto = (keys %{$entries{$gene}})[0];
 	}
 	else{
@@ -523,7 +526,6 @@ sub parse_timepoints{
 sub parse_deseq{
 ##Gene   Mock_3h Mock_7h Mock_23h        EBOV_3h EBOV_7h EBOV_23h        MARV_3h MARV_7h MARV_23h        FC(Mock-3h_vs_Mock-7h)  FC(Mock-3h_vs_Mock-23h) FC(Mock-7h_vs_Mock-23h) FC(EBOV-3h_vs_EBOV-7h)  FC(EBOV-3h_vs_EBOV-23h) FC(EBOV-7h_vs_EBOV-23h) FC(MARV-3h_vs_MARV-7h)  FC(MARV-3h_vs_MARV-23h) FC(MARV-7h_vs_MARV-23h) 
 #FC(Mock-3h_vs_EBOV-3h)  FC(Mock-3h_vs_MARV-3h)  FC(EBOV-3h_vs_MARV-3h)  FC(Mock-7h_vs_EBOV-7h)  FC(Mock-7h_vs_MARV-7h)  FC(EBOV-7h_vs_MARV-7h)  FC(Mock-23h_vs_EBOV-23h)        FC(Mock-23h_vs_MARV-23h)        FC(EBOV-23h_vs_MARV-23h)        PADJ(Mock-3h_vs_Mock-7h)        PADJ(Mock-3h_vs_Mock-23h)       PADJ(Mock-7h_vs_Mock-23h)       PADJ(EBOV-3h_vs_EBOV-7h)        PADJ(EBOV-3h_vs_EBOV-23h)       PADJ(EBOV-7h_vs_EBOV-23h)       PADJ(MARV-3h_vs_MARV-7h)        PADJ(MARV-3h_vs_MARV-23h)       PADJ(MARV-7h_vs_MARV-23h)       PADJ(Mock-3h_vs_EBOV-3h)        PADJ(Mock-3h_vs_MARV-3h)        PADJ(EBOV-3h_vs_MARV-3h)        PADJ(Mock-7h_vs_EBOV-7h)        PADJ(Mock-7h_vs_MARV-7h)        PADJ(EBOV-7h_vs_MARV-7h)        PADJ(Mock-23h_vs_EBOV-23h)      PADJ(Mock-23h_vs_MARV-23h)      PADJ(EBOV-23h_vs_MARV-23h)
-
     my $filetoparse = $_[0];
     (my $sample = $filetoparse) =~ s/\.csv//;
     my @samples = split(/\_/,$sample);
@@ -544,7 +546,7 @@ sub parse_deseq{
 	elsif(defined $entries{$gene}{APG}){
 	    $goto = "APG";
 	}
-	elsif(defined $entries{$gene}){
+	elsif((keys %{$entries{$gene}})[0]){
 	    $goto = (keys %{$entries{$gene}})[0];
 	}
 	else{
