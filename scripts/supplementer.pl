@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-08 17:34:22 fall> by joerg
+### Last changed Time-stamp: <2014-12-08 17:53:56 fall> by joerg
 
 ###############
 ###Use stuff
@@ -138,16 +138,16 @@ sub make_supplements{
 	    my (@samp, @condi, @deg, @max, @maxl, @fold) = ();
 	    foreach my $sample (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{CUFFLINKS}} ){
 		my $fold_change = 'NA';
-		$fold_change = join(",",@{$gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG});
+		$fold_change = join(" | ",@{$gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG}}) if (defined $gois{$gene}{$from}{LOGEXPRESSION}{$sample}{LOG});
 		push @fold, $fold_change;
 		push @samp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{CUFFLINKS}{$sample}} ){
 #		print STDERR "$sample\t$condition\t$from\t$gene\n";
 		    my $cufflinks = 'NA';
-		    $cufflinks = join(",",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition});
+		    $cufflinks = join(" | ",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition});
 		    @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition}); ## get rid of empty entries
 		    my $maxy = 'NA';
-		    $maxy = join(",",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    $maxy = join(" | ",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    @{$peaks{$gene}{$from}{$condition}} = @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
 		    push @deg, $cufflinks;
 		    push @max, $maxy;
@@ -157,7 +157,7 @@ sub make_supplements{
 ### Parse peaks separate for each condition, independent of sample to get rid of reocurring values
 	    foreach my $condition ( sort {lc($a) cmp lc($b)} keys %{$peaks{$gene}{$from}} ){
 		my $maxy = 'NA';
-		$maxy = join(",",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
+		$maxy = join(" | ",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
 		push @maxl, $maxy;
 	    }
 	    my $peak = join(",",@maxl) if (@maxl);
@@ -168,20 +168,20 @@ sub make_supplements{
 	    foreach my $sample (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{HB}} ){
 #		print STDERR $sample,"\n";
 		my $cfold_change = 'NA';
-		$cfold_change = join(",",@{$gois{$gene}{$from}{CLOGEXPRESSION}{$sample}{LOG}}) if(defined $gois{$gene}{$from}{CLOGEXPRESSION}{$sample}{LOG});
+		$cfold_change = join(" | ",@{$gois{$gene}{$from}{CLOGEXPRESSION}{$sample}{LOG}}) if(defined $gois{$gene}{$from}{CLOGEXPRESSION}{$sample}{LOG});
 		push @cfold, $cfold_change;
 		push @csamp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{HB}{$sample}} ){
 #		print STDERR $condition,"\n";
 		    my $cufflinks = 'NA';
-		    $cufflinks = join(",",@{$gois{$gene}{$from}{HB}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{HB}{$sample}{$condition});
+		    $cufflinks = join(" | ",@{$gois{$gene}{$from}{HB}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{HB}{$sample}{$condition});
 		    push @cdeg, $cufflinks;	    
 		    push @ccondi, $condition;
 		}
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{CPEAKS}{$sample}} ){
 		    @{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}} = grep /\S/,@{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{CPEAKS}{$sample}{$condition});
 		    my $maxy = 'NA';
-		    $maxy = join(",",@{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CPEAKS}{$sample}{$condition});
+		    $maxy = join(" | ",@{$gois{$gene}{$from}{CPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CPEAKS}{$sample}{$condition});
 		    push @cmax, $maxy;
 		}
 	    }
@@ -194,12 +194,12 @@ sub make_supplements{
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{MEV}{$sample}} ){
 #		print STDERR $condition,"\n";
 		    my $cufflinks = 'NA';
-		    $cufflinks = join(",",@{$gois{$gene}{$from}{MEV}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{MEV}{$sample}{$condition});
+		    $cufflinks = join(" | ",@{$gois{$gene}{$from}{MEV}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{MEV}{$sample}{$condition});
 		    @{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{TPEAKS}{$sample}{$condition});
 		    my $maxy = 'NA';
-		    $maxy = join(",",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{TPEAKS}{$sample}{$condition});
+		    $maxy = join(" | ",@{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{TPEAKS}{$sample}{$condition});
 		    my $fold_change = 'NA';
-		    $fold_change = join(",",@{$gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{$condition});
+		    $fold_change = join(" | ",@{$gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{TLOGEXPRESSION}{$sample}{$condition});
 		    push @tdeg, $cufflinks;
 		    push @tmax, $maxy;
 		    push @tfold, $fold_change;
@@ -213,16 +213,16 @@ sub make_supplements{
 		push @dsamp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}} ){
 		    my $cufflinks = 'NA';
-		    $cufflinks = join(",",@{$gois{$gene}{$from}{DE}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DE}{$sample}{$condition});
+		    $cufflinks = join(" | ",@{$gois{$gene}{$from}{DE}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DE}{$sample}{$condition});
 		    my $fold_change = 'NA';
-		    $fold_change = join(",",@{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition});
+		    $fold_change = join(" | ",@{$gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DLOGEXPRESSION}{$sample}{$condition});
 		    push @ddeg, $cufflinks;
 		    push @dfold, $fold_change;
 		    push @dcondi, $condition;
 		}
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}} ){
 		    my $defold_change = 'NA';
-		    $defold_change = join(",",@{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition});
+		    $defold_change = join(" | ",@{$gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{DELOGEXPRESSION}{$sample}{$condition});
 		    push @defold, $defold_change;
 		}
 	    }
