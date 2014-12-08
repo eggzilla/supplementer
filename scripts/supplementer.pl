@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-07 20:06:37 fall> by joerg
+### Last changed Time-stamp: <2014-12-08 15:01:54 fall> by joerg
 
 ###############
 ###Use stuff
@@ -459,6 +459,9 @@ sub parse_comparison{
 	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
+	elsif(defined $entries{$gene}){
+	    $goto = (keys %{$entries{$gene}})[0];
+	}
 	else{
 	    $goto = "COMPARISON";
 	}
@@ -494,6 +497,9 @@ sub parse_timepoints{
 	}
 	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
+	}
+	elsif(defined $entries{$gene}){
+	    $goto = (keys %{$entries{$gene}})[0];
 	}
 	else{
 	    $goto = "TIMEPOINTS";
@@ -537,6 +543,9 @@ sub parse_deseq{
 	}
 	elsif(defined $entries{$gene}{APG}){
 	    $goto = "APG";
+	}
+	elsif(defined $entries{$gene}){
+	    $goto = (keys %{$entries{$gene}})[0];
 	}
 	else{
 	    $goto = "DESEQ";
