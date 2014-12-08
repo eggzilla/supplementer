@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-08 18:20:28 fall> by joerg
+### Last changed Time-stamp: <2014-12-08 21:29:05 fall> by joerg
 
 ###############
 ###Use stuff
@@ -129,7 +129,7 @@ sub make_supplements{
 	foreach my $from (@parseit){
 	    next unless (defined $gois{$gene}{$from}{ID});
 	    my $goi = $gois{$gene}{$from}{ID};	
-	    #construct gene of interest goi.html
+#construct gene of interest goi.html
 	    my $goi_path = "$goi.html";
 	    my $goi_file = "goi.html";
 	    my $name = $gene;
@@ -142,7 +142,6 @@ sub make_supplements{
 		push @fold, $fold_change;
 		push @samp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{CUFFLINKS}{$sample}} ){
-#		print STDERR "$sample\t$condition\t$from\t$gene\n";
 		    my $cufflinks = 'NA';
 		    $cufflinks = join(" | ",@{$gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{CUFFLINKS}{$sample}{$condition});
 		    @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition}); ## get rid of empty entries
@@ -166,13 +165,11 @@ sub make_supplements{
 ### Parse Comparison
 	    my (@csamp, @ccondi, @cdeg, @cmax, @cfold) = ();
 	    foreach my $sample (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{HB}} ){
-#		print STDERR $sample,"\n";
 		my $cfold_change = 'NA';
 		$cfold_change = join(" | ",@{$gois{$gene}{$from}{CLOGEXPRESSION}{$sample}{LOG}}) if(defined $gois{$gene}{$from}{CLOGEXPRESSION}{$sample}{LOG});
 		push @cfold, $cfold_change;
 		push @csamp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{HB}{$sample}} ){
-#		print STDERR $condition,"\n";
 		    my $cufflinks = 'NA';
 		    $cufflinks = join(" | ",@{$gois{$gene}{$from}{HB}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{HB}{$sample}{$condition});
 		    push @cdeg, $cufflinks;	    
@@ -189,10 +186,8 @@ sub make_supplements{
 ### Parse Timepoints
 	    my (@tsamp, @tcondi, @tdeg, @tmax, @tfold) = ();
 	    foreach my $sample (keys %{$gois{$gene}{$from}{MEV}} ){
-#		print STDERR $sample,"\n";
 		push @tsamp, $sample;
 		foreach my $condition (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{MEV}{$sample}} ){
-#		print STDERR $condition,"\n";
 		    my $cufflinks = 'NA';
 		    $cufflinks = join(" | ",@{$gois{$gene}{$from}{MEV}{$sample}{$condition}}) if (defined $gois{$gene}{$from}{MEV}{$sample}{$condition});
 		    @{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{TPEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{TPEAKS}{$sample}{$condition});
@@ -238,16 +233,12 @@ sub make_supplements{
 	    $tex_link = link_entry($gois{$gene}{$from}{TEX},$dir) if ($from eq 'GOI' || $from eq 'APG');
 	    my $syn = 'UNKNOWN';
 	    ($syn = join(",",@{$gois{$gene}{$from}{SYNONYMS}})) =~ s/, /,/g if ($from eq 'GOI' || $from eq 'APG');
-#            foreach my $current_syn (@{$gois{$gene}{$from}{SYNONYMS}}){
 	    my $goi_link = goi_link($gene,$gois{$gene}{$from}{ID});
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
             my $texcontent = 'NA';
 	    $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX}) if ($from eq 'GOI' || $from eq 'APG');
 	    my $add = 'NA';
 	    $add = additional_plot_entry($gois{$gene}{$from}{EXTRA},${$gois{$gene}{$from}{IGV}}[0],$dir) if ($from eq 'GOI' || $from eq 'APG');
-#	}
-#	    my $peakl    = join(",",@maxl) if (@maxl);
-#	    $peakl = 'NA' unless ($peakl && $peakl !~ /NA/i);
 
 	    my $goi_vars = 
 	    {   
@@ -364,7 +355,6 @@ sub make_supplements{
 #construct index.hmtl
     my $index_path = $html_destination_path. "/index.html";
     my $index_file = 'index.html';
-    #my $index_entries = index_entry(\%genelist);
     my $index_vars = 
     {
 	genesofinterests => $index_entries
@@ -435,9 +425,7 @@ sub parse_expression{
 	push @{$entries{$gene}{$goto}{LOGEXPRESSION}{$sample}{LOG}}, ($l3, $l7, $l23);
 	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
-#	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}} = @{unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}})};
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
-#	@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}} = @{unique_array(\@{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}})};
     }
     return (\%entries);
 }
@@ -557,11 +545,9 @@ sub parse_deseq{
 	$entries{$gene}{$goto}{ID} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	$entries{$gene}{$goto}{NAME} = $gene if ($goto eq 'DESEQ' && $gene ne '');
 	my $sampled;
-#	if ($goto eq 'DESEQ' || (!defined $entries{$gene}{GOI}{CUFFLINKS} && !defined $entries{$gene}{APG}{CUFFLINKS})){
-	    push @{$entries{$gene}{$goto}{DE}{$sample}{mock}}, ($mb3, $mb7, $mb23);
-	    push @{$entries{$gene}{$goto}{DE}{$sample}{ebov}}, ($eb3, $eb7, $eb23);
-	    push @{$entries{$gene}{$goto}{DE}{$sample}{marv}}, ($vb3, $vb7, $vb23);
-#	}
+	push @{$entries{$gene}{$goto}{DE}{$sample}{mock}}, ($mb3, $mb7, $mb23);
+	push @{$entries{$gene}{$goto}{DE}{$sample}{ebov}}, ($eb3, $eb7, $eb23);
+	push @{$entries{$gene}{$goto}{DE}{$sample}{marv}}, ($vb3, $vb7, $vb23);
 	if (!defined $entries{$gene}{$goto}{CUFFLINKS}{hg19_mock_ebov}{mock}){
 	    $sampled = 'hg19_mock_ebov';
 	    push @{$entries{$gene}{$goto}{CUFFLINKS}{$sampled}{mock}}, ($mb3, $mb7, $mb23);
@@ -599,8 +585,8 @@ sub read_tables{
 	print STDERR "Processing GIO List!\n";
 	while (@process) {
 	    my $item = shift(@process);
-#print STDERR $#process,"\n";
 	    next unless ($item =~ /.goi./);
+	    my $to = 'GOI';
 	    (my $line	  = $item) =~ s/,w+//g;
 	    my @fields		  = split(/\;/,$line);
 	    my $goi		  = $fields[0];
@@ -608,10 +594,10 @@ sub read_tables{
 	    next if ($hacker eq 'OPTIONAL' || $hacker eq '');
 	    (my $gene		  = $fields[2]) =~ s/^\s+//g;
 	    $gene = $goi unless $gene;;
-	    next if (defined $entries{$gene}{GOI}{ID});
-
-	    my $duplicate	  = $fields[3];   
-	    my @synonyms = ();
+	    next if (defined $entries{$gene}{$to}{ID});
+#	    $to = 'APG' if (exists $entries{$gene}{APG});
+	    my $duplicate = $fields[3];   
+	    my @synonyms  = ();
 	    @synonyms	 = (
 		map {   
 		    s/^\s+//;  # strip leading spaces
@@ -668,61 +654,81 @@ sub read_tables{
 		my $extra	      = $fields[26];
 		my $notes	      = $fields[27];
 		
-		$entries{$gene}{GOI}{ID}  =	$goi;
-		push @{$entries{$gene}{GOI}{SYNONYMS}}, @synonyms;
-		push @{$entries{$gene}{GOI}{PATHWAY}}, @pathways;
-		push @{$entries{$gene}{GOI}{LITERATURE}}, @literature;   
+		if (defined $entries{$gene}{$to}{ID}){
+		    $entries{$gene}{$to}{ID} .= "\n".$goi || '';
+		}
+		else{
+		    $entries{$gene}{$to}{ID} = $goi || 'NA';
+		}
+
+		push @{$entries{$gene}{$to}{SYNONYMS}},  @synonyms;		
+		@{$entries{$gene}{$to}{SYNONYMS}} = @{unique_array(\@{$entries{$gene}{$to}{SYNONYMS}})};
+		push @{$entries{$gene}{$to}{PATHWAY}}, @pathways;
+		@{$entries{$gene}{$to}{PATHWAY}} = @{unique_array(\@{$entries{$gene}{$to}{PATHWAY}})};
+		push @{$entries{$gene}{$to}{LITERATURE}}, @literature;   
+		@{$entries{$gene}{$to}{LITERATURE}} = @{unique_array(\@{$entries{$gene}{$to}{LITERATURE}})};
 		my $name = $gene;
 		$name = $synonyms[0] if ($name =~ /.goi./ && defined $synonyms[0]);
-		$entries{$gene}{GOI}{NAME} = $name;
-		$entries{$gene}{GOI}{TEX}  = "$goi\/$goi\.tex";
+		if (defined $entries{$gene}{$to}{NAME} && $entries{$gene}{$to}{NAME} ne 'NA'){
+		    $entries{$gene}{$to}{NAME} .= "\n".$name || '';
+		}
+		else{
+		    $entries{$gene}{$to}{NAME} = $name || 'NA';
+		}
+
+		$entries{$gene}{$to}{TEX}  =	"$goi\/$goi\.tex";
+
 		if ($igvs == 1){
-		    push @{$entries{$gene}{GOI}{IGV}},"$goi\/snapshots/$goi\_igv.svg";
+		    push @{$entries{$gene}{$to}{IGV}},"$goi\/snapshots/$goi\_igv.svg";
 		}
 		elsif ($igvs == 0){
-		    push @{$entries{$gene}{GOI}{IGV}},"NONE";
+		    push @{$entries{$gene}{$to}{IGV}},"NONE";
 		}
 		else{
 		    for (1..$igvs){
-			push @{$entries{$gene}{GOI}{IGV}},"$goi\/snapshots/$goi\_igv$_\.svg";
+			push @{$entries{$gene}{$to}{IGV}},"$goi\/snapshots/$goi\_igv$_\.svg";
 		    }
 		}
 		if ($ucscs == 1){
-		    push @{$entries{$gene}{GOI}{UCSC}},"$goi\/snapshots/$goi\_ucsc.eps";
+		    push @{$entries{$gene}{$to}{UCSC}},"$goi\/snapshots/$goi\_ucsc.eps";
 		}
 		elsif ($ucscs == 0){
-		    push @{$entries{$gene}{GOI}{UCSC}},"NONE";
+		    push @{$entries{$gene}{$to}{UCSC}},"NONE";
 		}
 		else{
 		    for (1..$ucscs){
-			push @{$entries{$gene}{GOI}{UCSC}},"$goi\/snapshots/$goi\_ucsc$_\.eps";
+			push @{$entries{$gene}{$to}{UCSC}},"$goi\/snapshots/$goi\_ucsc$_\.eps";
 		    }
 		}
 		if ($sashimi == 1){
-		    push @{$entries{$gene}{GOI}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi.svg";
+		    push @{$entries{$gene}{$to}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi.svg";
 		}
 		elsif ($sashimi == 0){
-		    push @{$entries{$gene}{GOI}{SASHIMI}},"NONE";
+		    push @{$entries{$gene}{$to}{SASHIMI}},"NONE";
 		}
 		else{
 		    for (1..$sashimi){
-			push @{$entries{$gene}{GOI}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi$_\.svg";
+			push @{$entries{$gene}{$to}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi$_\.svg";
 		    }
 		}
-		$entries{$gene}{GOI}{NOTES} = $notes || 'NA';
-		$entries{$gene}{GOI}{EXTRA} = $extra || 'NA';
-		
+		$entries{$gene}{$to}{NOTES} .= $notes || 'NA';
+		if (defined $entries{$gene}{$to}{EXTRA} && $entries{$gene}{$to}{EXTRA} ne 'NA'){
+		    $entries{$gene}{$to}{EXTRA} .= $extra || '';
+		}
+		else{
+		    $entries{$gene}{$to}{EXTRA} = $extra || 'NA';
+		}
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    $entries{$syn}{GOI} = $entries{$gene}{GOI};		    
+		    $entries{$syn}{$to} = $entries{$gene}{$to};		    
 		}   
 	    }
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    $entries{$gene}{GOI} = $entries{$syn}{GOI} if (defined $entries{$syn}{GOI} && !defined $entries{$gene}{GOI});
+		    $entries{$gene}{$to} = $entries{$syn}{$to} if (defined $entries{$syn}{$to} && !defined $entries{$gene}{$to});
 		}
-		push @process, $line unless (defined $entries{$gene}{GOI});
+		push @process, $line unless (defined $entries{$gene}{$to});
 	    }
 	}
     }
@@ -732,6 +738,7 @@ sub read_tables{
 	    my $item = shift(@process);
 	    next unless ($item =~ /.apg./);
 	    (my $line	  = $item) =~ s/,w+//g;
+	    my $to = 'APG';
 	    my @fields		  = split(/\;/,$line);
 #Folder_ID;Hacker-Name;Gen;Duplicates?;Synonyms;Pathway;Literature;Screen IGV;Scale;Diff. Mock;Diff. Ebola;Diff. Marburg;Profile change;found?;Diff. Mock;Diff. Ebola;Diff. Marburg;Profile Change;Screen UCSC;UCSC Conservation;SNPs;SNPs;Sashimi plot;Intron transcripts;Intron transcripts;Upstream, 5'UTR;Downstream, 3'UTR;Extra Screens and why;Notes;Empty Entries?;Text Draft DONE;done.sh;Questions?;Done Lit Team / Done Questions;FRANZI FINAL CHECK;VERENA;STATE
 #hg19.apg.00209;Stefanie W.;ABCA1;0;;;;4;0-376;ed;u17d;dd;0;1;00;00;00;low expression;1;11111;0;0;4;0;0;0;0;0;COOL:  significantly downregulated in EBOV23h (327-390-22);#VALUE!;1;1;0;;1;transport molecules across extra and intracellular membranes;CHECKED
@@ -741,7 +748,7 @@ sub read_tables{
 	    (my $gene		  = $fields[2]) =~ s/^\s+//g;
 	    $gene = $apg unless ($gene);
 	    next if (defined $entries{$gene}{APG}{ID});
-
+#	    $to = 'GOI' if (exists ($entries{$gene}{GOI}));
 	    my $duplicate = $fields[3];   
 	    my @synonyms  = ();
 	    @synonyms	  = (
@@ -801,61 +808,81 @@ sub read_tables{
 		my $extra	      = $fields[27];
 		my $notes	      = $fields[28];
 		
-		$entries{$gene}{APG}{ID}  = $apg;
-		push @{$entries{$gene}{APG}{SYNONYMS}},  @synonyms;
-		push @{$entries{$gene}{APG}{PATHWAY}}, @pathways;
-		push @{$entries{$gene}{APG}{LITERATURE}}, @literature;   
+		if (defined $entries{$gene}{$to}{ID}){
+		    $entries{$gene}{$to}{ID} .= "\n".$apg || '';
+		}
+		else{
+		    $entries{$gene}{$to}{ID} = $apg || 'NA';
+		}
+
+		push @{$entries{$gene}{$to}{SYNONYMS}},  @synonyms;		
+		@{$entries{$gene}{$to}{SYNONYMS}} = @{unique_array(\@{$entries{$gene}{$to}{SYNONYMS}})};
+		push @{$entries{$gene}{$to}{PATHWAY}}, @pathways;
+		@{$entries{$gene}{$to}{PATHWAY}} = @{unique_array(\@{$entries{$gene}{$to}{PATHWAY}})};
+		push @{$entries{$gene}{$to}{LITERATURE}}, @literature;   
+		@{$entries{$gene}{$to}{LITERATURE}} = @{unique_array(\@{$entries{$gene}{$to}{LITERATURE}})};
 		my $name = $gene;
 		$name = $synonyms[0] if ($name =~ /.apg./ && defined $synonyms[0]);
-		$entries{$gene}{APG}{NAME} =	$name;
-		$entries{$gene}{APG}{TEX}  =	"$apg\/$apg\.tex";
+		if (defined $entries{$gene}{$to}{NAME} && $entries{$gene}{$to}{NAME} ne 'NA'){
+		    $entries{$gene}{$to}{NAME} .= "\n".$name || '';
+		}
+		else{
+		    $entries{$gene}{$to}{NAME} = $name || 'NA';
+		}
+		$entries{$gene}{$to}{TEX}  =	"$apg\/$apg\.tex";
 		if ($igvs == 1){
-		    push @{$entries{$gene}{APG}{IGV}},"$apg\/snapshots/$apg\_igv.svg";
+		    push @{$entries{$gene}{$to}{IGV}},"$apg\/snapshots/$apg\_igv.svg";
 		}
 		elsif ($igvs == 0){
-		    push @{$entries{$gene}{APG}{IGV}},"NONE";
+		    push @{$entries{$gene}{$to}{IGV}},"NONE";
 		}
 		else{
 		    for (1..$igvs){
-			push @{$entries{$gene}{APG}{IGV}},"$apg\/snapshots/$apg\_igv$_\.svg";
+			push @{$entries{$gene}{$to}{IGV}},"$apg\/snapshots/$apg\_igv$_\.svg";
 		    }
 		}
 		if ($ucscs == 1){
-		    push @{$entries{$gene}{APG}{UCSC}},"$apg\/snapshots/$apg\_ucsc.eps";
+		    push @{$entries{$gene}{$to}{UCSC}},"$apg\/snapshots/$apg\_ucsc.eps";
 		}
 		elsif ($ucscs == 0){
-		    push @{$entries{$gene}{APG}{UCSC}},"NONE";
+		    push @{$entries{$gene}{$to}{UCSC}},"NONE";
 		}
 		else{
 		    for (1..$ucscs){
-			push @{$entries{$gene}{APG}{UCSC}},"$apg\/snapshots/$apg\_ucsc$_\.eps";
+			push @{$entries{$gene}{$to}{UCSC}},"$apg\/snapshots/$apg\_ucsc$_\.eps";
 		    }
 		}
 		if ($sashimi == 1){
-		    push @{$entries{$gene}{APG}{SASHIMI}},"$apg\/snapshots/$apg\_sashimi.svg";
+		    push @{$entries{$gene}{$to}{SASHIMI}},"$apg\/snapshots/$apg\_sashimi.svg";
 		}
 		elsif ($sashimi == 0){
-		    push @{$entries{$gene}{APG}{SASHIMI}},"NONE";
+		    push @{$entries{$gene}{$to}{SASHIMI}},"NONE";
 		}
 		else{
 		    for (1..$sashimi){
-			push @{$entries{$gene}{APG}{SASHIMI}},"$apg\/snapshots/$apg\_sashimi$_\.svg";
+			push @{$entries{$gene}{$to}{SASHIMI}},"$apg\/snapshots/$apg\_sashimi$_\.svg";
 		    }
 		}
-		$entries{$gene}{APG}{NOTES}	   = $notes || 'NA';
-		$entries{$gene}{APG}{EXTRA}	   = $extra || 'NA';
+		$entries{$gene}{$to}{NOTES} .= $notes || 'NA';
+		if (defined $entries{$gene}{$to}{EXTRA}){
+		    $entries{$gene}{$to}{EXTRA} = '' if ($entries{$gene}{$to}{EXTRA} eq 'NA');
+		    $entries{$gene}{$to}{EXTRA} .= $extra || '';
+		}
+		else{
+		    $entries{$gene}{$to}{EXTRA} = $extra || 'NA';
+		}
 		
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    $entries{$syn}{APG}=$entries{$gene}{APG};		    
+		    $entries{$syn}{$to}=$entries{$gene}{$to};		    
 		}   
 	    }
 	    else{
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
-		    $entries{$gene}{APG} = $entries{$syn}{APG} if (defined $entries{$syn}{APG} && !defined $entries{$gene}{APG});
+		    $entries{$gene}{$to} = $entries{$syn}{$to} if (defined $entries{$syn}{$to} && !defined $entries{$gene}{$to});
 		}
-		push @process, $line unless (defined $entries{$gene}{APG});
+		push @process, $line unless (defined $entries{$gene}{$to});
 	    }
 	}
     }
