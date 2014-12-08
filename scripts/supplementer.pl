@@ -887,18 +887,49 @@ sub index_entry_detailed{
     my $sashimi	      = shift;
     my $ucsc	      = shift;
     my $maxy	      = shift;
-    my $index_entry;
+    my ($index_entry,$c3,$c7,$c23,$e3,$e7,$e23,$v3,$v7,$v23);
     my $template     =	Template->new({
 	INCLUDE_PATH => ["$template_path"],
 	RELATIVE     =>	0
-                                 });
+                                      });
+    if($maxy ne "NA"){
+        $maxy =~ s/\n//g;
+        my @max_reads = split (",", $maxy);
+        $c3 = $max_reads[0];
+        $c7 = $max_reads[1];
+        $c23 = $max_reads[2];
+        $e3 = $max_reads[3];
+        $e7 = $max_reads[4];
+        $e23 = $max_reads[5];
+        $v3 = $max_reads[6];
+        $v7 = $max_reads[7];
+        $v23 = $max_reads[8];
+    }else{
+        $c3 = "NA";
+        $c7 = "NA";
+        $c23 = "NA";
+        $e3 = "NA";
+        $e7 = "NA";
+        $e23 = "NA";
+        $v3 = "NA";
+        $v7 = "NA";
+        $v23 = "NA";
+    }
     my $entry_file = "indexentry.html";
     my $entry_vars = 
     {   
         name	 => $name,
         synonyms => $synonyms,
         goiid	 => $goiid,
-	maxy     => $maxy,
+        c3 => $c3,
+        c7 => $c7,
+        c23 => $c23,
+        e3 => $e3,
+        e7 => $e7,
+        e23 => $e23,
+        v3 => $v3,
+        v7 => $v7,
+        v23 => $v23,
         textxt	 => $textxt,
         igv	 => $igv,
         sashimi	 => $sashimi,
