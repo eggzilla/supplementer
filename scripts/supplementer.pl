@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-08 16:25:44 fall> by joerg
+### Last changed Time-stamp: <2014-12-08 17:34:22 fall> by joerg
 
 ###############
 ###Use stuff
@@ -243,6 +243,8 @@ sub make_supplements{
 	    $index_entries .= index_entry_detailed($template_path,$goi_link,$syn,$gois{$gene}{$from}{ID},$tex_link,$igv,$sashimi,$ucsc,$peak);
             my $texcontent = 'NA';
 	    $texcontent = tex_content($wdir,$dir,$gois{$gene}{$from}{TEX}) if ($from eq 'GOI' || $from eq 'APG');
+	    my $add = 'NA';
+	    $add = additional_plot_entry($gois{$gene}{$from}{EXTRA},${$gois{$gene}{$from}{IGV}}[0],$dir) if ($from eq 'GOI' || $from eq 'APG');
 #	}
 #	    my $peakl    = join(",",@maxl) if (@maxl);
 #	    $peakl = 'NA' unless ($peakl && $peakl !~ /NA/i);
@@ -257,7 +259,7 @@ sub make_supplements{
 		igv		  => $igv || 'NA',
 		sashimi		  => $sashimi || 'NA',
 		ucsc		  => $ucsc || 'NA',
-		additionalplots   => additional_plot_entry($gois{$gene}{$from}{EXTRA},${$gois{$gene}{$from}{IGV}}[0],$dir),
+		additionalplots   => $add || 'NA',
                 texcontent        => $texcontent || 'NA',
 ##sample1
 		sample		  => $samp[0] || 'NA',
@@ -420,7 +422,7 @@ sub parse_expression{
 	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
-	elsif((keys %{$entries{$gene}})[0]){
+	elsif((keys %{$entries{$gene}})[0]){   
 	    $goto = (keys %{$entries{$gene}})[0];
 	}
 	else{
@@ -609,8 +611,8 @@ sub read_tables{
 	    next if (defined $entries{$gene}{GOI}{ID});
 
 	    my $duplicate	  = $fields[3];   
-#	    my @synonyms	  = split(/[,\s]+/,$fields[4]);
-	    my @synonyms	  = (
+	    my @synonyms = ();
+	    @synonyms	 = (
 		map {   
 		    s/^\s+//;  # strip leading spaces
 		    s/\s+$//;  # strip trailing spaces
@@ -621,7 +623,8 @@ sub read_tables{
 	    push @synonyms, $gene unless ($gene =~ /.goi./ || $gene eq '');
 	    @synonyms = grep /\S/, @synonyms; ## get rid of empty entries
 	    if ($duplicate eq '' || $duplicate == 0 || ($duplicate && $fields[8] ne '')){
-		my @pathways =	(
+		my @pathways = ();
+		@pathways    = (
 		    map {   
 			s/^\s+//;  # strip leading spaces
 			s/\s+$//;  # strip trailing spaces
@@ -630,7 +633,8 @@ sub read_tables{
 		    split(/[,]+|[\s]{2,}|\t/,$fields[5])
 		    ) if ($fields[5] ne '');
 		push @pathways, 'Unknown' unless ($pathways[0]);
-		my @literature =	(
+		my @literature = ();
+		@literature    = (
 		    map {   
 			s/^\s+//;  # strip leading spaces
 			s/\s+$//;  # strip trailing spaces
@@ -705,8 +709,8 @@ sub read_tables{
 			push @{$entries{$gene}{GOI}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi$_\.svg";
 		    }
 		}
-		$entries{$gene}{GOI}{NOTES}	   = $notes || 'NA';
-		$entries{$gene}{GOI}{EXTRA}	   = $extra || 'NA';
+		$entries{$gene}{GOI}{NOTES} = $notes || 'NA';
+		$entries{$gene}{GOI}{EXTRA} = $extra || 'NA';
 		
 		foreach my $syn (@synonyms){
 		    next if ($syn eq $gene);
@@ -738,8 +742,9 @@ sub read_tables{
 	    $gene = $apg unless ($gene);
 	    next if (defined $entries{$gene}{APG}{ID});
 
-	    my $duplicate	  = $fields[3];   
-	    my @synonyms	  = (
+	    my $duplicate = $fields[3];   
+	    my @synonyms  = ();
+	    @synonyms	  = (
 		map {   
 		    s/^\s+//;  # strip leading spaces
 		    s/\s+$//;  # strip trailing spaces
@@ -750,7 +755,8 @@ sub read_tables{
 	    push @synonyms, $gene unless ($gene =~ /.apg./ || $gene eq '');
 	    @synonyms = grep /\S/, @synonyms; ## get rid of empty entries
 	    if ($duplicate eq '' || $duplicate == 0){
-		my @pathways =	(
+		my @pathways = ();
+		@pathways    = (
 		    map {   
 			s/^\s+//;  # strip leading spaces
 			s/\s+$//;  # strip trailing spaces
@@ -759,7 +765,8 @@ sub read_tables{
 		    split(/[,]+|[\s]{2,}|\t/,$fields[5])
 		    ) if ($fields[5] ne '');
 		push @pathways, 'Unknown' unless ($pathways[0]);
-		my @literature =	(
+		my @literature = ();
+		@literature    = (
 		    map {   
 			s/^\s+//;  # strip leading spaces
 			s/\s+$//;  # strip trailing spaces
@@ -973,11 +980,11 @@ sub additional_plot_entry{
     my $file = shift;
     my $dir = shift;
     my $link_entry;
-    if($additional_plot_entry eq ""){
+    if($additional_plot_entry eq '' || $additional_plot_entry eq 'NA' || $additional_plot_entry =~ /^0/ || $file eq 'NONE'){
         $link_entry = "NA";
     }else{
         my @file = split ("/", $file);
-        my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
+	my $snapshotdir = join("/",$wdir,$dir,$file[0],$file[1]);
         $link_entry = "<a href=\"$snapshotdir\">Additional plots</a>";
     }
     return $link_entry;
