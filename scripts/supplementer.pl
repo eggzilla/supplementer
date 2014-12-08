@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-08 17:53:56 fall> by joerg
+### Last changed Time-stamp: <2014-12-08 18:20:28 fall> by joerg
 
 ###############
 ###Use stuff
@@ -157,7 +157,7 @@ sub make_supplements{
 ### Parse peaks separate for each condition, independent of sample to get rid of reocurring values
 	    foreach my $condition ( sort {lc($a) cmp lc($b)} keys %{$peaks{$gene}{$from}} ){
 		my $maxy = 'NA';
-		$maxy = join(" | ",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
+		$maxy = join(",",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
 		push @maxl, $maxy;
 	    }
 	    my $peak = join(",",@maxl) if (@maxl);
