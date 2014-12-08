@@ -921,7 +921,7 @@ sub image_entry{
             my $imagelink = $wdir . "/" . $dir ."/". $file;
             my $thumblink = "./" ."thumbs/" . "$filename";
             `inkscape --file=$imagelink --export-width=150 --export-height=150 --without-gui --export-png=$thumblink` unless (-e $thumblink || !-e $imagelink);
-            $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
+            $image_entry = "<a href=\"$imagelink\"><img src=\"$thumblink\"></a>";
         }
         if($filename =~/.eps/){
             $filename =~ s/.eps/.png/;
@@ -929,7 +929,7 @@ sub image_entry{
             my $imagelink = $wdir . "/" . $dir ."/". $file;
             my $thumblink = "./" ."thumbs/" . "$filename";
             `convert $imagelink -resize 150x150! $thumblink` unless (-e $thumblink || !-e $imagelink);
-            $image_entry = "<a href=\"$snapshotdir\"><img src=\"$thumblink\"></a>";
+            $image_entry = "<a href=\"$imagelink\"><img src=\"$thumblink\"></a>";
         }
     }
     return $image_entry;
