@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-08 21:29:05 fall> by joerg
+### Last changed Time-stamp: <2014-12-10 19:11:17 fall> by joerg
 
 ###############
 ###Use stuff
@@ -93,6 +93,9 @@ foreach my $file (@csvs){
     }
     elsif($file =~ /deseq/i){
 	%genes = %{parse_deseq($file,\%genes)};
+    }
+    elsif($file =~ /ymax.norm/i){
+	%genes = %{parse_ymax($file,\%genes)};
     }
     chdir ($wdir);
 }
@@ -428,6 +431,44 @@ sub parse_expression{
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
     }
     return (\%entries);
+}
+
+sub parse_ymax{
+#hg19.ymax.norm
+    my $filetoparse = $_[0];
+    my %entries	    = %{$_[1]};
+    print STDERR "Ymax parsing $filetoparse!\n";
+    open (LIST,"<","$filetoparse") || die "$!\n";
+    while(<LIST>){
+	next if($_ =~ /^#/);
+	my $line  = $_;
+	my ($gene, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23, $vp3, $vp7, $vp23) = split(/\t/,$line);
+	my $goto;
+	if (defined $entries{$gene}{GOI}{ID}){
+	    $goto = "GOI";
+	}
+	elsif(defined $entries{$gene}{APG}{ID}){
+	    $goto = "APG";
+	}
+	else{
+	    next;
+	}
+	foreach my $sample ( keys %{$entries{$gene}{$goto}{PEAKS}} ){
+	    foreach my $org ( keys %{$entries{$gene}{$goto}{PEAKS}} ){
+		next if (defined $entries{$gene}{$goto}{PEAKS}{$sample}{$org});
+		if ($org eq 'mock'){
+		    push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($mp3, $mp7, $mp23);
+		}
+		elsif ($org eq 'ebov'){
+		    push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($ep3, $ep7, $ep23);
+		}
+		elsif ($org eq 'marv'){
+		    push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($vp3, $vp7, $vp23);
+		}
+	    }
+	}
+	return (\%entries);
+    }
 }
 
 sub parse_comparison{
