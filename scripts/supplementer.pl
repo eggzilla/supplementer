@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-10 19:11:17 fall> by joerg
+### Last changed Time-stamp: <2014-12-12 20:54:17 fall> by joerg
 
 ###############
 ###Use stuff
@@ -720,7 +720,7 @@ sub read_tables{
 		$entries{$gene}{$to}{TEX}  =	"$goi\/$goi\.tex";
 
 		if ($igvs == 1){
-		    push @{$entries{$gene}{$to}{IGV}},"$goi\/snapshots/$goi\_igv.svg";
+		    push @{$entries{$gene}{$to}{IGV}},"$goi\/snapshots/$goi\_igv1.svg";
 		}
 		elsif ($igvs == 0){
 		    push @{$entries{$gene}{$to}{IGV}},"NONE";
@@ -731,7 +731,7 @@ sub read_tables{
 		    }
 		}
 		if ($ucscs == 1){
-		    push @{$entries{$gene}{$to}{UCSC}},"$goi\/snapshots/$goi\_ucsc.eps";
+		    push @{$entries{$gene}{$to}{UCSC}},"$goi\/snapshots/$goi\_ucsc1.eps";
 		}
 		elsif ($ucscs == 0){
 		    push @{$entries{$gene}{$to}{UCSC}},"NONE";
@@ -742,7 +742,7 @@ sub read_tables{
 		    }
 		}
 		if ($sashimi == 1){
-		    push @{$entries{$gene}{$to}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi.svg";
+		    push @{$entries{$gene}{$to}{SASHIMI}},"$goi\/snapshots/$goi\_sashimi1.svg";
 		}
 		elsif ($sashimi == 0){
 		    push @{$entries{$gene}{$to}{SASHIMI}},"NONE";
@@ -872,7 +872,7 @@ sub read_tables{
 		}
 		$entries{$gene}{$to}{TEX}  =	"$apg\/$apg\.tex";
 		if ($igvs == 1){
-		    push @{$entries{$gene}{$to}{IGV}},"$apg\/snapshots/$apg\_igv.svg";
+		    push @{$entries{$gene}{$to}{IGV}},"$apg\/snapshots/$apg\_igv1.svg";
 		}
 		elsif ($igvs == 0){
 		    push @{$entries{$gene}{$to}{IGV}},"NONE";
@@ -883,7 +883,7 @@ sub read_tables{
 		    }
 		}
 		if ($ucscs == 1){
-		    push @{$entries{$gene}{$to}{UCSC}},"$apg\/snapshots/$apg\_ucsc.eps";
+		    push @{$entries{$gene}{$to}{UCSC}},"$apg\/snapshots/$apg\_ucsc1.eps";
 		}
 		elsif ($ucscs == 0){
 		    push @{$entries{$gene}{$to}{UCSC}},"NONE";
@@ -894,7 +894,7 @@ sub read_tables{
 		    }
 		}
 		if ($sashimi == 1){
-		    push @{$entries{$gene}{$to}{SASHIMI}},"$apg\/snapshots/$apg\_sashimi.svg";
+		    push @{$entries{$gene}{$to}{SASHIMI}},"$apg\/snapshots/$apg\_sashimi1.svg";
 		}
 		elsif ($sashimi == 0){
 		    push @{$entries{$gene}{$to}{SASHIMI}},"NONE";
