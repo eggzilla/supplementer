@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-12 20:54:17 fall> by joerg
+### Last changed Time-stamp: <2014-12-15 15:30:32 fall> by joerg
 
 ###############
 ###Use stuff
@@ -162,7 +162,11 @@ sub make_supplements{
 		$maxy = join(",",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
 		push @maxl, $maxy;
 	    }
-	    my $peak = join(",",@maxl) if (@maxl);
+	    my $peak;
+	    my @ranges = (1,0,2); ## Resort order for index.html page
+	    for (@ranges){
+		$peak .= $maxl[$_]."," if ($maxl[$_]);
+	    }
 	    $peak = 'NA' unless ($peak && $peak !~ /NA/i);
 
 ### Parse Comparison
