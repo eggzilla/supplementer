@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-15 15:30:32 fall> by joerg
+### Last changed Time-stamp: <2014-12-16 21:57:00 fall> by joerg
 
 ###############
 ###Use stuff
@@ -150,7 +150,7 @@ sub make_supplements{
 		    @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} = grep /\S/, @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition}); ## get rid of empty entries
 		    my $maxy = 'NA';
 		    $maxy = join(" | ",@{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}}) if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
-		    @{$peaks{$gene}{$from}{$condition}} = @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition});
+		    @{$peaks{$gene}{$from}{$condition}} = @{$gois{$gene}{$from}{PEAKS}{$sample}{$condition}} if ($gois{$gene}{$from}{PEAKS}{$sample}{$condition} && $sample =~ /hg19/);
 		    push @deg, $cufflinks;
 		    push @max, $maxy;
 		    push @condi, $condition;
@@ -163,7 +163,7 @@ sub make_supplements{
 		push @maxl, $maxy;
 	    }
 	    my $peak;
-	    my @ranges = (1,0,2); ## Resort order for index.html page
+	    my @ranges = (2,0,1); ## Resort order for index.html page
 	    for (@ranges){
 		$peak .= $maxl[$_]."," if ($maxl[$_]);
 	    }
