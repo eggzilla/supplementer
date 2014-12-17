@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-17 19:34:34 fall> by joerg
+### Last changed Time-stamp: <2014-12-18 00:48:43 fall> by joerg
 
 ###############
 ###Use stuff
@@ -438,7 +438,9 @@ sub parse_expression{
 	push @syno, @{$entries{$gene}{$goto}{SYNONYMS}} if (defined $entries{$gene}{$goto}{SYNONYMS});
 	foreach my $syn (@syno){
 	    next if ($syn eq $gene);
-	    $entries{$syn}{$goto}=$entries{$gene}{$goto} if (defined $entries{$gene}{$goto});
+	    $entries{$syn}{$goto}{LOGEXPRESSION}=$entries{$gene}{$goto}{LOGEXPRESSION} if (defined $entries{$gene}{$goto}{LOGEXPRESSION} && !defined $entries{$syn}{$goto}{LOGEXPRESSION});
+	    $entries{$syn}{$goto}{CUFFLINKS}=$entries{$gene}{$goto}{CUFFLINKS} if (defined $entries{$gene}{$goto}{CUFFLINKS} && !defined $entries{$syn}{$goto}{CUFFLINKS});
+	    $entries{$syn}{$goto}{PEAKS}=$entries{$gene}{$goto}{PEAKS} if (defined $entries{$gene}{$goto}{PEAKS} && !defined $entries{$syn}{$goto}{PEAKS});
 	} 
     }
     return (\%entries);
@@ -453,40 +455,31 @@ sub parse_ymax{
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
-	my ($gen, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23, $vp3, $vp7, $vp23) = split(/\t/,$line);
+	my ($gene, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23, $vp3, $vp7, $vp23) = split(/\t/,$line);
 	my $goto;
-	if (defined $entries{$gen}{GOI}{ID}){
+	if (defined $entries{$gene}{GOI}{ID}){
 	    $goto = "GOI";
 	}
-	elsif(defined $entries{$gen}{APG}{ID}){
+	elsif(defined $entries{$gene}{APG}{ID}){
 	    $goto = "APG";
 	}
 	else{
 	    next;
 	}
-	my @syno;
-	push @syno, @{$entries{$gen}{$goto}{SYNONYMS}} if (defined $entries{$gen}{$goto}{SYNONYMS});
-	foreach my $gene (@syno){
-	    foreach my $sample ( keys %{$entries{$gene}{$goto}{PEAKS}} ){
-		foreach my $org ( keys %{$entries{$gene}{$goto}{PEAKS}{$sample}} ){
-		    print STDERR "$gene\t$goto\t$sample\t$org\t$mp3, $mp7, $mp23\n" if ($gene eq 'IFITM2');
-		    next if (defined $entries{$gene}{$goto}{PEAKS}{$sample}{$org});
-		    print STDERR "$gene\t$goto\t$sample\t$org\t$mp3, $mp7, $mp23\n" if ($gene eq 'IFITM2');
-		    if ($org eq 'mock'){
-			push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($mp3, $mp7, $mp23);
-		    }
-		    elsif ($org eq 'ebov'){
-			push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($ep3, $ep7, $ep23);
-		    }
-		    elsif ($org eq 'marv'){
-			push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($vp3, $vp7, $vp23);
-		    }
-		}
+	my @samp = ('hg19_mock_ebov','hg19_mock_marv','hg19_ebov_marv');
+	my @orgs = ('mock','ebov','marv');
+	foreach my $sample (@samp){
+	    foreach my $org (@orgs){
+		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($mp3, $mp7, $mp23) if ($org eq 'mock');
+		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($ep3, $ep7, $ep23) if ($org eq 'ebov');
+		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($vp3, $vp7, $vp23) if ($org eq 'marv');
 	    }
 	}
+	my @syno;
+	push @syno, @{$entries{$gene}{$goto}{SYNONYMS}} if (defined $entries{$gene}{$goto}{SYNONYMS});
 	foreach my $syn (@syno){
-	    next if ($syn eq $gen);
-	    $entries{$syn}{$goto}=$entries{$gen}{$goto} if (defined $entries{$gen}{$goto}{PEAKS} && !defined $entries{$syn}{$goto}{PEAKS});
+	    next if ($syn eq $gene);
+	    $entries{$syn}{$goto}{PEAKS}=$entries{$gene}{$goto}{PEAKS} if (defined $entries{$gene}{$goto}{PEAKS} && !defined $entries{$syn}{$goto}{PEAKS});
 	}
 
     }
