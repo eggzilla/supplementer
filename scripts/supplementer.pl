@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-16 21:57:00 fall> by joerg
+### Last changed Time-stamp: <2014-12-17 19:34:34 fall> by joerg
 
 ###############
 ###Use stuff
@@ -433,6 +433,13 @@ sub parse_expression{
 	push @{$entries{$gene}{$goto}{MAX}{$sample}{PVAL}}, $max;
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[1]}}, ($mp3, $mp7, $mp23);
 	push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$samples[2]}}, ($ep3, $ep7, $ep23);
+
+	my @syno;
+	push @syno, @{$entries{$gene}{$goto}{SYNONYMS}} if (defined $entries{$gene}{$goto}{SYNONYMS});
+	foreach my $syn (@syno){
+	    next if ($syn eq $gene);
+	    $entries{$syn}{$goto}=$entries{$gene}{$goto} if (defined $entries{$gene}{$goto});
+	} 
     }
     return (\%entries);
 }
@@ -446,33 +453,44 @@ sub parse_ymax{
     while(<LIST>){
 	next if($_ =~ /^#/);
 	my $line  = $_;
-	my ($gene, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23, $vp3, $vp7, $vp23) = split(/\t/,$line);
+	my ($gen, $mp3, $mp7, $mp23, $ep3, $ep7, $ep23, $vp3, $vp7, $vp23) = split(/\t/,$line);
 	my $goto;
-	if (defined $entries{$gene}{GOI}{ID}){
+	if (defined $entries{$gen}{GOI}{ID}){
 	    $goto = "GOI";
 	}
-	elsif(defined $entries{$gene}{APG}{ID}){
+	elsif(defined $entries{$gen}{APG}{ID}){
 	    $goto = "APG";
 	}
 	else{
 	    next;
 	}
-	foreach my $sample ( keys %{$entries{$gene}{$goto}{PEAKS}} ){
-	    foreach my $org ( keys %{$entries{$gene}{$goto}{PEAKS}} ){
-		next if (defined $entries{$gene}{$goto}{PEAKS}{$sample}{$org});
-		if ($org eq 'mock'){
-		    push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($mp3, $mp7, $mp23);
-		}
-		elsif ($org eq 'ebov'){
-		    push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($ep3, $ep7, $ep23);
-		}
-		elsif ($org eq 'marv'){
-		    push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($vp3, $vp7, $vp23);
+	my @syno;
+	push @syno, @{$entries{$gen}{$goto}{SYNONYMS}} if (defined $entries{$gen}{$goto}{SYNONYMS});
+	foreach my $gene (@syno){
+	    foreach my $sample ( keys %{$entries{$gene}{$goto}{PEAKS}} ){
+		foreach my $org ( keys %{$entries{$gene}{$goto}{PEAKS}{$sample}} ){
+		    print STDERR "$gene\t$goto\t$sample\t$org\t$mp3, $mp7, $mp23\n" if ($gene eq 'IFITM2');
+		    next if (defined $entries{$gene}{$goto}{PEAKS}{$sample}{$org});
+		    print STDERR "$gene\t$goto\t$sample\t$org\t$mp3, $mp7, $mp23\n" if ($gene eq 'IFITM2');
+		    if ($org eq 'mock'){
+			push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($mp3, $mp7, $mp23);
+		    }
+		    elsif ($org eq 'ebov'){
+			push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($ep3, $ep7, $ep23);
+		    }
+		    elsif ($org eq 'marv'){
+			push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($vp3, $vp7, $vp23);
+		    }
 		}
 	    }
 	}
-	return (\%entries);
+	foreach my $syn (@syno){
+	    next if ($syn eq $gen);
+	    $entries{$syn}{$goto}=$entries{$gen}{$goto} if (defined $entries{$gen}{$goto}{PEAKS} && !defined $entries{$syn}{$goto}{PEAKS});
+	}
+
     }
+    return (\%entries);
 }
 
 sub parse_comparison{
@@ -511,6 +529,13 @@ sub parse_comparison{
 	push @{$entries{$gene}{$goto}{CMAX}{$sample}{PVAL}}, $max;
 	push @{$entries{$gene}{$goto}{CPEAKS}{$sample}{$samples[0]."\_".$samples[2]}}, ($hgp3, $hgp7, $hgp23);
 	push @{$entries{$gene}{$goto}{CPEAKS}{$sample}{$samples[1]."\_".$samples[2]}}, ($raep3, $raep7, $raep23);
+	
+	my @syno;
+	push @syno, @{$entries{$gene}{$goto}{SYNONYMS}} if (defined $entries{$gene}{$goto}{SYNONYMS});
+	foreach my $syn (@syno){
+	    next if ($syn eq $gene);
+	    $entries{$syn}{$goto}=$entries{$gene}{$goto};		    
+	} 
     }
     return (\%entries);
 }
@@ -554,6 +579,13 @@ sub parse_timepoints{
 	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[0]}}, ($mp3, $mp7, $mp23);
 	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[1]}}, ($ep3, $ep7, $ep23);
 	push @{$entries{$gene}{$goto}{TPEAKS}{$sample}{$samples[2]}}, ($vp3, $vp7, $vp23);
+
+	my @syno;
+	push @syno, @{$entries{$gene}{$goto}{SYNONYMS}} if (defined $entries{$gene}{$goto}{SYNONYMS});
+	foreach my $syn (@syno){
+	    next if ($syn eq $gene);
+	    $entries{$syn}{$goto}=$entries{$gene}{$goto};		    
+	} 
     }
     return (\%entries);
 }
@@ -614,6 +646,13 @@ sub parse_deseq{
 	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE3}}, ($me3, $mv3, $ev3);
 	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE7}}, ($me7, $mv7, $ev7);
 	push @{$entries{$gene}{$goto}{DELOGEXPRESSION}{$sample}{DE23}}, ($me23, $mv23, $ev23);
+	
+	my @syno;
+	push @syno, @{$entries{$gene}{$goto}{SYNONYMS}} if (defined $entries{$gene}{$goto}{SYNONYMS});
+	foreach my $syn (@syno){
+	    next if ($syn eq $gene);
+	    $entries{$syn}{$goto}=$entries{$gene}{$goto};		    
+	} 
     }
     return (\%entries);
 }
