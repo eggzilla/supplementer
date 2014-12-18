@@ -4,7 +4,7 @@
 ### then save as semicolon separated list and have fun parsing
 ### 
 ### Script supplementer.pl;
-### Last changed Time-stamp: <2014-12-18 00:48:43 fall> by joerg
+### Last changed Time-stamp: <2014-12-18 18:00:14 fall> by joerg
 
 ###############
 ###Use stuff
@@ -160,6 +160,7 @@ sub make_supplements{
 	    foreach my $condition ( sort {lc($a) cmp lc($b)} keys %{$peaks{$gene}{$from}} ){
 		my $maxy = 'NA';
 		$maxy = join(",",@{$peaks{$gene}{$from}{$condition}}) if ($peaks{$gene}{$from}{$condition});
+#		print STDERR "$gene\t$from\t$condition\t$maxy\n";
 		push @maxl, $maxy;
 	    }
 	    my $peak;
@@ -168,7 +169,7 @@ sub make_supplements{
 		$peak .= $maxl[$_]."," if ($maxl[$_]);
 	    }
 	    $peak = 'NA' unless ($peak && $peak !~ /NA/i);
-
+#		print STDERR "$gene\t$from\t$peak\n";
 ### Parse Comparison
 	    my (@csamp, @ccondi, @cdeg, @cmax, @cfold) = ();
 	    foreach my $sample (sort {lc($a) cmp lc($b)} keys %{$gois{$gene}{$from}{HB}} ){
@@ -470,9 +471,10 @@ sub parse_ymax{
 	my @orgs = ('mock','ebov','marv');
 	foreach my $sample (@samp){
 	    foreach my $org (@orgs){
-		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($mp3, $mp7, $mp23) if ($org eq 'mock');
-		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($ep3, $ep7, $ep23) if ($org eq 'ebov');
-		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($vp3, $vp7, $vp23) if ($org eq 'marv');
+		next if (defined $entries{$gene}{$goto}{PEAKS}{$sample}{$org} && $sample =~ /$org/);
+		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($mp3, $mp7, $mp23) if ($org eq 'mock' && $sample =~ /$org/);
+		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($ep3, $ep7, $ep23) if ($org eq 'ebov' && $sample =~ /$org/);
+		push @{$entries{$gene}{$goto}{PEAKS}{$sample}{$org}}, ($vp3, $vp7, $vp23) if ($org eq 'marv' && $sample =~ /$org/);
 	    }
 	}
 	my @syno;
